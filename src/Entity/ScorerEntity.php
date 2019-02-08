@@ -27,18 +27,35 @@ class ScorerEntity implements UserInterface
      */
     private $password;
 
+    /**
+     * get the ID.
+     *
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setUsername(string $username): self
+    /**
+     * set the userName and return instance of ScorerEntity.
+     *
+     * @param mixed $username
+     * @return ScorerEntity
+     */
+    public function setUsername($username): self
     {
         $this->username = $username;
 
         return $this;
     }
 
+    /**
+     * set the password and return instance of ScorerEntity.
+     *
+     * @param string $password
+     * @return ScorerEntity
+     */
     public function setPassword(string $password): self
     {
         $this->password = $password;
@@ -49,18 +66,9 @@ class ScorerEntity implements UserInterface
     /**
      * Returns the roles granted to the user.
      *
-     *     public function getRoles()
-     *     {
-     *         return ['ROLE_USER'];
-     *     }
-     *
-     * Alternatively, the roles might be stored on a ``roles`` property,
-     * and populated in any number of different ways when the user object
-     * is created.
-     *
-     * @return (Role|string)[] The user roles
+     * @return array (Role|string)[] The user roles
      */
-    public function getRoles()
+    public function getRoles():array
     {
         return ['Scorer'];
     }
@@ -68,36 +76,19 @@ class ScorerEntity implements UserInterface
     /**
      * Returns the password used to authenticate the user.
      *
-     * This should be the encoded password. On authentication, a plain-text
-     * password will be salted, encoded, and then compared to this value.
-     *
      * @return string The password
      */
     public function getPassword()
     {
-        // TODO: Implement getPassword() method.
+        return $this->password;
     }
 
     /**
-     * Returns the salt that was originally used to encode the password.
-     *
-     * This can return null if the password was not encoded using a salt.
-     *
-     * @return string|null The salt
+     * @return null
      */
     public function getSalt()
     {
-        // TODO: Implement getSalt() method.
-    }
-
-    /**
-     * Returns the username used to authenticate the user.
-     *
-     * @return string The username
-     */
-    public function getUsername()
-    {
-        // TODO: Implement getUsername() method.
+        return null;
     }
 
     /**
@@ -108,8 +99,17 @@ class ScorerEntity implements UserInterface
      */
     public function eraseCredentials()
     {
-        // TODO: Implement eraseCredentials() method.
+        $this->password = null;
     }
 
 
+    /**
+     * Returns the username used to authenticate the user.
+     *
+     * @return string The username
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
 }
