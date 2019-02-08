@@ -17,6 +17,8 @@ class HomeController extends AbstractController
     }
 
     /**
+     * render the home page with username and role
+     *
      * @Route("/home", name="scorer.home")
      */
     public function index(): Response
