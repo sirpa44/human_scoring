@@ -2,27 +2,35 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Security;
+
 
 class HomeController extends AbstractController
 {
 
     private $security;
+    private $urlGenerator;
 
-    public function __construct(Security $security)
+    public function __construct(Security $security, UrlGeneratorInterface $urlGenerator)
     {
         $this->security = $security;
+        $this->urlGenerator = $urlGenerator;
     }
 
     /**
      * render the home page with username and role
      *
-     * @Route("/home", name="scorer.home")
+     * @Route("/", name="scorer.home")
      */
     public function index(): Response
     {
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return new RedirectResponse($this->urlGenerator->generate('app_login'));
+        }
         $user = $this->security->getUser();
         $role = $user->getRoles();
         return $this->render('page/home.html.twig',[

@@ -7,6 +7,7 @@
         "ext-iconv": "*",
         "php-curl-class/php-curl-class": "^8.5",
         "symfony/apache-pack": "^1.0",
+        "symfony/asset": "4.2.*",
         "symfony/console": "4.2.*",
         "symfony/debug": "4.2.*",
         "symfony/debug-pack": "^1.0",

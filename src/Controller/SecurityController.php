@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,5 +24,14 @@ class SecurityController extends AbstractController
             'last_username' => $lastUsername,
             'error' => $error
         ]);
+    }
+
+    /**
+     * @Route("/logout", name="app_logout")
+     * @throws \Exception
+     */
+    public function logout(): void
+    {
+        throw new \Exception('This should never be reached!');
     }
 }
