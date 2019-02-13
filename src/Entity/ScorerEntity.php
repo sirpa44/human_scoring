@@ -50,6 +50,16 @@ class ScorerEntity implements UserInterface
     }
 
     /**
+     * Returns the username used to authenticate the user.
+     *
+     * @return string The username
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
      * set the password and return instance of ScorerEntity.
      *
      * @param string $password
@@ -62,16 +72,6 @@ class ScorerEntity implements UserInterface
     }
 
     /**
-     * Returns the roles granted to the user.
-     *
-     * @return array (Role|string)[] The user roles
-     */
-    public function getRoles():array
-    {
-        return ['Scorer'];
-    }
-
-    /**
      * Returns the password used to authenticate the user.
      *
      * @return string The password
@@ -79,6 +79,16 @@ class ScorerEntity implements UserInterface
     public function getPassword()
     {
         return $this->password;
+    }
+
+    /**
+     * Returns the roles granted to the user.
+     *
+     * @return array (Role|string)[] The user roles
+     */
+    public function getRoles():array
+    {
+        return ['Scorer'];
     }
 
     /**
@@ -95,16 +105,7 @@ class ScorerEntity implements UserInterface
      */
     public function eraseCredentials()
     {
+        return null;
     }
 
-
-    /**
-     * Returns the username used to authenticate the user.
-     *
-     * @return string The username
-     */
-    public function getUsername()
-    {
-        return $this->username;
-    }
 }
