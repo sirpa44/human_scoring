@@ -65,6 +65,10 @@
         }
     },
     "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "^3.1",
+        "liip/functional-test-bundle": "~2.0@alpha",
+        "symfony/browser-kit": "4.2.*",
+        "symfony/css-selector": "4.2.*",
         "symfony/maker-bundle": "^1.11",
         "symfony/phpunit-bridge": "4.2.*"
     }

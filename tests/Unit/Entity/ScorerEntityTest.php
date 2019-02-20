@@ -39,6 +39,9 @@ class ScorerEntityTest extends TestCase
         ];
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testSetPassword()
     {
         $entity = new ScorerEntity();
@@ -50,6 +53,9 @@ class ScorerEntityTest extends TestCase
         $this->assertEquals('1234qwer', $property->getValue($entity));
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testGetPassword()
     {
         $entity = new ScorerEntity();
@@ -61,6 +67,9 @@ class ScorerEntityTest extends TestCase
         $this->assertEquals('1234qwer', $entity->getPassword());
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testGetId()
     {
         $entity = new ScorerEntity();
@@ -71,6 +80,7 @@ class ScorerEntityTest extends TestCase
 
         $this->assertEquals(55, $entity->getId());
     }
+
 
     public function testGetRole()
     {
