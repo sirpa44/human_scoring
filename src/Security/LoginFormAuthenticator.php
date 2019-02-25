@@ -1,4 +1,10 @@
 <?php
+/**
+ * This a great software
+ *
+ * @author patpat
+ * @license See LICENCE.md
+ */
 namespace App\Security;
 
 use App\Entity\ScorerEntity;
@@ -30,7 +36,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator,
                                 CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder)
     {
-
         $this->entityManager = $entityManager;
         $this->urlGenerator = $urlGenerator;
         $this->csrfTokenManager = $csrfTokenManager;

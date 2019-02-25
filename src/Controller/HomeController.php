@@ -1,4 +1,10 @@
 <?php
+/**
+ * This a great software
+ *
+ * @author patpat
+ * @license See LICENCE.md
+ */
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,6 +21,10 @@ class HomeController extends AbstractController
     private $security;
     private $urlGenerator;
 
+    /**
+     * @param Security $security
+     * @param UrlGeneratorInterface $urlGenerator
+     */
     public function __construct(Security $security, UrlGeneratorInterface $urlGenerator)
     {
         $this->security = $security;
@@ -33,7 +43,8 @@ class HomeController extends AbstractController
         }
         $user = $this->security->getUser();
         $role = $user->getRoles();
-        return $this->render('page/home.html.twig',[
+
+        return $this->render('page/home.html.twig', [
             'scorer' => $user->getUsername(),
             'role' => $role[0]
         ]);

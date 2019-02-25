@@ -8,18 +8,21 @@
         {% endblock %}
     </head>
     <body>
-    <div class="container-fluid bg-primary">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-md-1 ">
-                <img src="{{ asset('images/tao.svg') }}" alt="Logo" class="img-rounded img-responsive" style="padding: 15px">
-            </div>
-            {% if app.user %}
-                <div class="col-md-1 pull-right">
-                    <a class="btn btn-primary btn-lg" style="margin-top: 27px" href="{{ path('app_logout') }}">LOG OUT</a>
-                </div>
-            {% endif %}
+            <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+    <div class="container">
+                <img src="{{ asset('images/tao.svg') }}" alt="Logo" class="alert">
+                <ul class="nav navbar-nav navbar-right navbar-bottom">
+                    {% if app.user %}
+                        <li class="nav-link alert-info"><a  href="{{ path('app_logout') }}">Logout</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
         </div>
     </div>
+
     <div class="container">
         <div class="row">
             {% block body %}{% endblock %}

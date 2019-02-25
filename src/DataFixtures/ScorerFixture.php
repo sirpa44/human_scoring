@@ -1,4 +1,10 @@
 <?php
+/**
+ * This a great software
+ *
+ * @author patpat
+ * @license See LICENCE.md
+ */
 namespace App\DataFixtures;
 
 use App\Entity\ScorerEntity;
@@ -8,12 +14,15 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class ScorerFixture extends Fixture
 {
-//    private $encoder;
-//
-//    public function __construct(UserPasswordEncoderInterface $encoder)
-//    {
-//        $this->encoder = $encoder;
-//    }
+    private $encoder;
+
+    /**
+     * @param UserPasswordEncoderInterface $encoder
+     */
+    public function __construct(UserPasswordEncoderInterface $encoder)
+    {
+        $this->encoder = $encoder;
+    }
 
     /**
      * Load data fixtures with the passed EntityManager
@@ -24,14 +33,9 @@ class ScorerFixture extends Fixture
     {
         $scorer = new ScorerEntity();
         $scorer->setUsername('jean-mix');
-//        $password = $this->encoder->encodePassword($scorer, 'pass_1234');
-        $password = 'pass_1234';
-        $scorer->setPassword($password);
-
-        $objectManager->persist($scorer);
-
+        $scorer->setPassword($this->encoder->encodePassword($scorer, 'pass_1234'));
         $this->addReference('scorer-fixture', $scorer);
-
+        $objectManager->persist($scorer);
         $objectManager->flush();
     }
 

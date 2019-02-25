@@ -1,4 +1,10 @@
 <?php
+/**
+ * This a great software
+ *
+ * @author patpat
+ * @license See LICENCE.md
+ */
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

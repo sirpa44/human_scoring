@@ -1,4 +1,10 @@
 <?php
+/**
+ * This a great software
+ *
+ * @author patpat
+ * @license See LICENCE.md
+ */
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -68,6 +74,7 @@ class ScorerEntity implements UserInterface
     public function setPassword(string $password): self
     {
         $this->password = $password;
+
         return $this;
     }
 

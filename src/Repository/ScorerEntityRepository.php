@@ -1,6 +1,10 @@
 <?php
-namespace App\Repository;
-
+/**
+ * This a great software
+ *
+ * @author patpat
+ * @license See LICENCE.md
+ */namespace App\Repository;
 use App\Entity\ScorerEntity;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -17,33 +21,4 @@ class ScorerEntityRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, ScorerEntity::class);
     }
-
-    // /**
-    //  * @return ScorerEntity[] Returns an array of ScorerEntity objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('s.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?ScorerEntity
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

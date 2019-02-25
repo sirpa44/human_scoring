@@ -1,7 +1,12 @@
 <?php
+/**
+ * This a great software
+ *
+ * @author patpat
+ * @license See LICENCE.md
+ */
 namespace App\Test\Controller;
 
-use App\DataFixtures\ScorerFixture;
 use App\Tests\BaseWebTestCase;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -10,7 +15,8 @@ class HomeControllerTest extends BaseWebTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->addFixture(new ScorerFixture());
+        $scorerEntity = self::$container->get('App\DataFixtures\ScorerFixture');
+        $this->addFixture($scorerEntity);
         $this->loadFixtures();
     }
 
@@ -18,7 +24,6 @@ class HomeControllerTest extends BaseWebTestCase
     {
         $this->getClient()->request('GET', '/');
         $this->assertTrue($this->getClient()->getResponse()->isRedirect('/login'));
-        $this->assertContains('login', $this->getClient()->getResponse()->headers->get('Location'));
     }
 
     public function testLoginAsJeanMix()
@@ -34,7 +39,6 @@ class HomeControllerTest extends BaseWebTestCase
         $this->logInAs($user, 'Scorer');
         $this->assertInstanceOf(UserInterface::class, $user);
         $this->getClient()->request('GET', '/');
-
         $this->assertContains($user->getUsername(), $this->getClient()->getResponse()->getContent());
     }
 }
