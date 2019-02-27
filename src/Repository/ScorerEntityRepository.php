@@ -21,4 +21,5 @@ class ScorerEntityRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, ScorerEntity::class);
     }
+
 }
