@@ -49,9 +49,10 @@ class ImportScorerCommand extends Command
             }
             $scorers[] = array_combine($headers, $line);
         }
-//        var_dump($scorers);die();
 
         foreach ($scorers as $scorer) {
+            // $scorer = repo->findnyname($name)
+            // $scorer->setSmth()
             $scorerEntity = new ScorerEntity();
             $scorerEntity->setUsername($scorer['username']);
             $scorerEntity->setPassword($this->encoder->encodePassword($scorerEntity, 'pass_1234'));
