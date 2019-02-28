@@ -33,12 +33,18 @@ class ImportScorerCommand extends Command
     {
         $this
             ->setDescription('Import scorers data from a CSV file')
-            ->setHelp('This command allow you to import scorer data from a CSV file');
+            ->setHelp('This command allow you to import scorer data from a CSV file')
+            ->addOption('--force');
+
     }
+
+
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
+            $option = $input->getFirstArgument();
+            var_dump($option);die();
             if (!file_exists($this->root . '/Sources/scorer.csv')) {
                 $output->writeln('File doesn\'t exist !');
                 throw new FileNotFoundException('File doesn\'t exist');
@@ -59,7 +65,10 @@ class ImportScorerCommand extends Command
                 } else {
                     $dbScorer = $this->scorerRepository->findOneBy(['username' => $scorer['username']]);
                     if ($dbScorer instanceOf ScorerEntity) {
-                        var_dump($dbScorer);die();
+
+
+
+
                     } else {
                         $scorerEntity = new ScorerEntity();
                         $scorerEntity->setUsername($scorer['username']);
@@ -78,7 +87,6 @@ class ImportScorerCommand extends Command
     }
 
     /**
-     * le nom de la commande doit etre dans le constructeur
      * un argument pour forcer la mise a jour des entity si elles existe deja
      * default dry run et --force pour forcer l'ecriture en db
      * stop watch pour avoir des metrix (temps d'execution, ram utiliser, cpu utiliser)
