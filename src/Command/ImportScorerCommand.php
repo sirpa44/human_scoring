@@ -5,6 +5,7 @@ use App\Entity\ScorerEntity;
 use App\Repository\ScorerEntityRepository;
 use Doctrine\Common\Persistence\ObjectManager;
 use http\Exception\UnexpectedValueException;
+use League\Csv\Reader;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -40,30 +41,34 @@ class ImportScorerCommand extends Command
     {
         try {
             if (!file_exists($this->root . '/Sources/scorer.csv')) {
-                $output->writeln('File doesn\'t exist !' );
+                $output->writeln('File doesn\'t exist !');
                 throw new FileNotFoundException('File doesn\'t exist');
             }
-            $resource = fopen($this->root . '/Sources/scorer.csv', 'r');
-            $headers = fgetcsv($resource);
+            $reader = Reader::createFromPath($this->root . '/Sources/scorer.csv', 'r');
+            $reader->setHeaderOffset(0);
+            $headers = $reader->getHeader();
             if ($headers[0] !== 'username' || $headers[1] !== 'password') {
                 $output->writeln('CSV file incorrectly filled' );
                 throw new UnexpectedValueException();
             }
-            while (($line = fgetcsv($resource)) !== false) {
-                if (!array_key_exists(1, $line)) {
-                    $output->writeln('The score ' . $line[0] . ' can\'t be add to the database' );
-                    return 1;
-                }
-                $scorer = array_combine($headers, $line);
-                $dbScorer = $this->scorerRepository->findOneBy(['username' => $scorer['username']]);
-                if ($dbScorer instanceOf ScorerEntity) {
-                    var_dump($dbScorer);die();
+            $it = $reader->getIterator();
+            $it->rewind();
+            while ($it->valid()) {
+                $scorer = $it->current();
+                if ($scorer['password'] === null) {
+                    $output->writeln('The scorer ' . $scorer[0] . ' can\'t be add to the database' );
                 } else {
-                    $scorerEntity = new ScorerEntity();
-                    $scorerEntity->setUsername($scorer['username']);
-                    $scorerEntity->setPassword($this->encoder->encodePassword($scorerEntity, 'pass_1234'));
-                    $this->objectManager->persist($scorerEntity);
+                    $dbScorer = $this->scorerRepository->findOneBy(['username' => $scorer['username']]);
+                    if ($dbScorer instanceOf ScorerEntity) {
+                        var_dump($dbScorer);die();
+                    } else {
+                        $scorerEntity = new ScorerEntity();
+                        $scorerEntity->setUsername($scorer['username']);
+                        $scorerEntity->setPassword($this->encoder->encodePassword($scorerEntity, 'pass_1234'));
+                        $this->objectManager->persist($scorerEntity);
+                    }
                 }
+                $it->next();
             }
             $this->objectManager->flush();
             $output->writeln('import done successfully !!');
@@ -74,7 +79,6 @@ class ImportScorerCommand extends Command
     }
 
     /**
-     * @todo utiliser phpleague (librairie) pour faire le csv
      * le nom de la commande doit etre dans le constructeur
      * un argument pour forcer la mise a jour des entity si elles existe deja
      * default dry run et --force pour forcer l'ecriture en db
