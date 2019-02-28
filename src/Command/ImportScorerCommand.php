@@ -14,7 +14,6 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class ImportScorerCommand extends Command
 {
-    protected static $defaultName = 'app:import-scorer';
     protected $root;
     protected $encoder;
     protected $objectManager;
@@ -26,7 +25,7 @@ class ImportScorerCommand extends Command
         $this->encoder = $encoder;
         $this->objectManager = $objectManager;
         $this->scorerRepository = $scorerRepository;
-        parent::__construct();
+        parent::__construct('app:import-scorer');
         $this->root = $root;
     }
 
