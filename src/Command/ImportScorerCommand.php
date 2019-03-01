@@ -35,7 +35,6 @@ class ImportScorerCommand extends Command
             ->setDescription('Import scorers data from a CSV file')
             ->setHelp('This command allow you to import scorer data from a CSV file')
             ->addOption('--force');
-
     }
 
 
@@ -43,8 +42,6 @@ class ImportScorerCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
-            $option = $input->getFirstArgument();
-            var_dump($option);die();
             if (!file_exists($this->root . '/Sources/scorer.csv')) {
                 $output->writeln('File doesn\'t exist !');
                 throw new FileNotFoundException('File doesn\'t exist');
@@ -66,7 +63,7 @@ class ImportScorerCommand extends Command
                     $dbScorer = $this->scorerRepository->findOneBy(['username' => $scorer['username']]);
                     if ($dbScorer instanceOf ScorerEntity) {
 
-
+                        // ask if you want to overwrite the database
 
 
                     } else {
@@ -78,8 +75,15 @@ class ImportScorerCommand extends Command
                 }
                 $it->next();
             }
-            $this->objectManager->flush();
-            $output->writeln('import done successfully !!');
+            if ($input->hasParameterOption('--force')) {
+                $this->objectManager->flush();
+                $output->write('import done successfully !!');
+            } else {
+                $output->writeln([
+                    'try import done successfully !!',
+                    'add --force to flush the Scorers'
+                ]);
+            }
             return 0;
         } catch (\Exception $e) {
             return 1;
@@ -88,9 +92,6 @@ class ImportScorerCommand extends Command
 
     /**
      * un argument pour forcer la mise a jour des entity si elles existe deja
-     * default dry run et --force pour forcer l'ecriture en db
      * stop watch pour avoir des metrix (temps d'execution, ram utiliser, cpu utiliser)
-     *
      */
-
 }
