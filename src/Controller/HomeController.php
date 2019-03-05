@@ -17,17 +17,13 @@ use Symfony\Component\Security\Core\Security;
 
 class HomeController extends AbstractController
 {
-
-    private $security;
     private $urlGenerator;
 
     /**
-     * @param Security $security
      * @param UrlGeneratorInterface $urlGenerator
      */
-    public function __construct(Security $security, UrlGeneratorInterface $urlGenerator)
+    public function __construct(UrlGeneratorInterface $urlGenerator)
     {
-        $this->security = $security;
         $this->urlGenerator = $urlGenerator;
     }
 
@@ -41,7 +37,7 @@ class HomeController extends AbstractController
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return new RedirectResponse($this->urlGenerator->generate('app_login'));
         }
-        $user = $this->security->getUser();
+        $user = $this->getUser();
         $role = $user->getRoles();
 
         return $this->render('page/home.html.twig', [
