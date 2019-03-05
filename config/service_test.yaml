@@ -1,6 +1,0 @@
-services:
-  _defaults:
-    public: true
-
-  App\DataFixtures\ScorerFixture:
-    arguments: ['@security.encoders']
