@@ -7,7 +7,7 @@
  */
 namespace App\DataFixtures;
 
-use App\Entity\ScorerEntity;
+use App\Entity\Scorer;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -31,7 +31,7 @@ class ScorerFixture extends Fixture
      */
     public function load(ObjectManager $objectManager)
     {
-        $scorer = new ScorerEntity();
+        $scorer = new Scorer();
         $scorer->setUsername('jean-mix');
         $scorer->setPassword($this->encoder->encodePassword($scorer, 'pass_1234'));
         $this->addReference('scorer-fixture', $scorer);

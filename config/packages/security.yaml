@@ -2,7 +2,7 @@ security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         default_provider:
-            entity: { class: App\Entity\ScorerEntity }
+            entity: { class: App\Entity\Scorer }
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -31,7 +31,7 @@ security:
 #         - { path: ^/, roles: Scorer }
     encoders:
         # use your user class name here
-        App\Entity\ScorerEntity:
+        App\Entity\Scorer:
             # bcrypt or argon2i are recommended
             # argon2i is more secure, but requires PHP 7.2 or the Sodium extension
             algorithm: bcrypt

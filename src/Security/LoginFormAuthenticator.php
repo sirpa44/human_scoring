@@ -7,7 +7,7 @@
  */
 namespace App\Security;
 
-use App\Entity\ScorerEntity;
+use App\Entity\Scorer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -88,7 +88,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         if (!$this->csrfTokenManager->isTokenValid($token)) {
             throw new InvalidCsrfTokenException();
         }
-        $user = $this->entityManager->getRepository(ScorerEntity::class)->findOneBy(['username' => $credentials['username']]);
+        $user = $this->entityManager->getRepository(Scorer::class)->findOneBy(['username' => $credentials['username']]);
         if (!$user) {
             throw new CustomUserMessageAuthenticationException('Username could not be found.');
         }

@@ -13,7 +13,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ScorerEntityRepository")
  */
-class ScorerEntity implements UserInterface
+class Scorer implements UserInterface
 {
     /**
      * @ORM\Id()
@@ -23,7 +23,7 @@ class ScorerEntity implements UserInterface
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, unique=true)
      */
     private $username;
 
@@ -46,7 +46,7 @@ class ScorerEntity implements UserInterface
      * set the userName and return instance of ScorerEntity.
      *
      * @param mixed $username
-     * @return ScorerEntity
+     * @return Scorer
      */
     public function setUsername($username): self
     {
@@ -69,7 +69,7 @@ class ScorerEntity implements UserInterface
      * set the password and return instance of ScorerEntity.
      *
      * @param string $password
-     * @return ScorerEntity
+     * @return Scorer
      */
     public function setPassword(string $password): self
     {
