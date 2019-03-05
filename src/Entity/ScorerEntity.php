@@ -91,7 +91,7 @@ class ScorerEntity implements UserInterface
     /**
      * Returns the roles granted to the user.
      *
-     * @return array (Role|string)[] The user roles
+     * @return array string[] The user roles
      */
     public function getRoles():array
     {
