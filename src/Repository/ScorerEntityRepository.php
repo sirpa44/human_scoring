@@ -1,10 +1,11 @@
 <?php
 /**
- * This a great software
+ * Human Scoring Software
  *
- * @author patpat
+ * @author antoinep@taotesting.com
  * @license See LICENCE.md
- */namespace App\Repository;
+ */
+namespace App\Repository;
 use App\Entity\ScorerEntity;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;

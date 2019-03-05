@@ -1,4 +1,10 @@
 <?php
+/**
+ * Human Scoring Software
+ *
+ * @author antoinep@taotesting.com
+ * @license See LICENCE.md
+ */
 namespace App\Tests\Integration\Controller;
 
 use App\DataFixtures\ScorerFixture;

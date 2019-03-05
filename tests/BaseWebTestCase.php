@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * Human Scoring Software
+ *
+ * @author antoinep@taotesting.com
+ * @license See LICENCE.md
+ */
 namespace App\Tests;
 
 use Doctrine\Bundle\FixturesBundle\Loader\SymfonyFixturesLoader;

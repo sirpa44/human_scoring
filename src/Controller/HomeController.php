@@ -1,8 +1,8 @@
 <?php
 /**
- * This a great software
+ * Human Scoring Software
  *
- * @author patpat
+ * @author antoinep@taotesting.com
  * @license See LICENCE.md
  */
 namespace App\Controller;
