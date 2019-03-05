@@ -11,7 +11,8 @@ class SecurityControllerTest extends BaseWebTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->addFixture(new ScorerFixture());
+        $scorerEntity = self::$container->get('App\DataFixtures\ScorerFixture');
+        $this->addFixture($scorerEntity);
         $this->loadFixtures();
     }
 
