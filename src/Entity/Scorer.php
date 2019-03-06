@@ -95,7 +95,7 @@ class Scorer implements UserInterface
      */
     public function getRoles():array
     {
-        return ['Scorer'];
+        return ['ROLE_USER'];
     }
 
     /**

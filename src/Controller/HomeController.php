@@ -29,13 +29,10 @@ class HomeController extends AbstractController
     /**
      * render the home page with username and role
      *
-     * @Route("/", name="scorer.home")
+     * @Route("/home", name="scorer.home")
      */
     public function index(): Response
     {
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return new RedirectResponse($this->urlGenerator->generate('app_login'));
-        }
         $user = $this->getUser();
         $role = $user->getRoles();
 
