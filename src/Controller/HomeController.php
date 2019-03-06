@@ -8,7 +8,6 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -29,7 +28,7 @@ class HomeController extends AbstractController
     /**
      * render the home page with username and role
      *
-     * @Route("/home", name="scorer.home")
+     * @Route("/", name="scorer.home")
      */
     public function index(): Response
     {
