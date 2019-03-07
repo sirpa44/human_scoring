@@ -142,7 +142,7 @@ class BaseWebTestCase extends WebTestCase
         $firewallContext = 'main';
 
         $token = new UsernamePasswordToken($user, $user->getUsername(), $firewallContext, array($role));
-        $session->set('_security_'.$firewallContext, serialize($token));
+        $session->set('_security_' . $firewallContext, serialize($token));
         $session->save();
 
         $cookie = new Cookie($session->getName(), $session->getId());

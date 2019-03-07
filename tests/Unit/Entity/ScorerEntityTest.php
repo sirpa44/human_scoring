@@ -90,7 +90,7 @@ class ScorerEntityTest extends TestCase
     public function testGetRole()
     {
         $entity = new Scorer();
-        $this->assertEquals(['Scorer'], $entity->getRoles());
+        $this->assertEquals(['ROLE_USER'], $entity->getRoles());
     }
 
     public function testGetSalt()

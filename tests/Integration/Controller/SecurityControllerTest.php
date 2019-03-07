@@ -7,7 +7,6 @@
  */
 namespace App\Tests\Integration\Controller;
 
-use App\DataFixtures\ScorerFixture;
 use App\Tests\BaseWebTestCase;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
