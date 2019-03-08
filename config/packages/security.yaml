@@ -2,7 +2,7 @@ security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         default_provider:
-            entity: { class: App\Entity\ScorerEntity }
+            entity: { class: App\Entity\Scorer }
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -27,11 +27,12 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-#         - { path: ^/, roles: Scorer }
+        - { path: ^/login, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/, role: ROLE_USER }
+
     encoders:
         # use your user class name here
-        App\Entity\ScorerEntity:
+        App\Entity\Scorer:
             # bcrypt or argon2i are recommended
             # argon2i is more secure, but requires PHP 7.2 or the Sodium extension
             algorithm: bcrypt

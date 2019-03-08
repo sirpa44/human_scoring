@@ -1,33 +1,27 @@
-<?php
+<?php declare(strict_types = 1);
 /**
- * This a great software
+ * Human Scoring Software
  *
- * @author patpat
+ * @author antoinep@taotesting.com
  * @license See LICENCE.md
  */
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Security;
 
 
 class HomeController extends AbstractController
 {
-
-    private $security;
     private $urlGenerator;
 
     /**
-     * @param Security $security
      * @param UrlGeneratorInterface $urlGenerator
      */
-    public function __construct(Security $security, UrlGeneratorInterface $urlGenerator)
+    public function __construct(UrlGeneratorInterface $urlGenerator)
     {
-        $this->security = $security;
         $this->urlGenerator = $urlGenerator;
     }
 
@@ -38,10 +32,7 @@ class HomeController extends AbstractController
      */
     public function index(): Response
     {
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            return new RedirectResponse($this->urlGenerator->generate('app_login'));
-        }
-        $user = $this->security->getUser();
+        $user = $this->getUser();
         $role = $user->getRoles();
 
         return $this->render('page/home.html.twig', [

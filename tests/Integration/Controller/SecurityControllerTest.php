@@ -1,7 +1,12 @@
-<?php
+<?php declare(strict_types = 1);
+/**
+ * Human Scoring Software
+ *
+ * @author antoinep@taotesting.com
+ * @license See LICENCE.md
+ */
 namespace App\Tests\Integration\Controller;
 
-use App\DataFixtures\ScorerFixture;
 use App\Tests\BaseWebTestCase;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -11,7 +16,8 @@ class SecurityControllerTest extends BaseWebTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->addFixture(new ScorerFixture());
+        $scorerEntity = self::$container->get('App\DataFixtures\ScorerFixture');
+        $this->addFixture($scorerEntity);
         $this->loadFixtures();
     }
 

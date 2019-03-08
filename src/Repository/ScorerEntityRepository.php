@@ -1,25 +1,26 @@
-<?php
+<?php declare(strict_types = 1);
 /**
- * This a great software
+ * Human Scoring Software
  *
- * @author patpat
+ * @author antoinep@taotesting.com
  * @license See LICENCE.md
- */namespace App\Repository;
-use App\Entity\ScorerEntity;
+ */
+namespace App\Repository;
+use App\Entity\Scorer;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
- * @method ScorerEntity|null find($id, $lockMode = null, $lockVersion = null)
- * @method ScorerEntity|null findOneBy(array $criteria, array $orderBy = null)
- * @method ScorerEntity[]    findAll()
- * @method ScorerEntity[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Scorer|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Scorer|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Scorer[]    findAll()
+ * @method Scorer[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class ScorerEntityRepository extends ServiceEntityRepository
 {
     public function __construct(RegistryInterface $registry)
     {
-        parent::__construct($registry, ScorerEntity::class);
+        parent::__construct($registry, Scorer::class);
     }
 
 }

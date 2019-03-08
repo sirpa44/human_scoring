@@ -1,5 +1,10 @@
-<?php
-
+<?php declare(strict_types = 1);
+/**
+ * Human Scoring Software
+ *
+ * @author antoinep@taotesting.com
+ * @license See LICENCE.md
+ */
 namespace App\Tests;
 
 use Doctrine\Bundle\FixturesBundle\Loader\SymfonyFixturesLoader;
@@ -137,7 +142,7 @@ class BaseWebTestCase extends WebTestCase
         $firewallContext = 'main';
 
         $token = new UsernamePasswordToken($user, $user->getUsername(), $firewallContext, array($role));
-        $session->set('_security_'.$firewallContext, serialize($token));
+        $session->set('_security_' . $firewallContext, serialize($token));
         $session->save();
 
         $cookie = new Cookie($session->getName(), $session->getId());

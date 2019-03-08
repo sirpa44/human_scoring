@@ -1,8 +1,13 @@
-<?php
-
+<?php declare(strict_types = 1);
+/**
+ * Human Scoring Software
+ *
+ * @author antoinep@taotesting.com
+ * @license See LICENCE.md
+ */
 namespace App\tests\Unit\Tests\Entity;
 
-use App\Entity\ScorerEntity;
+use App\Entity\Scorer;
 use PHPUnit\Framework\TestCase;
 
 class ScorerEntityTest extends TestCase
@@ -15,13 +20,13 @@ class ScorerEntityTest extends TestCase
      */
     public function testSetGetUsername($fixture)
     {
-        $entity = new ScorerEntity();
+        $entity = new Scorer();
         $this->assertInstanceOf(
-            ScorerEntity::class,
+            Scorer::class,
             $entity->setUsername($fixture)
         );
 
-        $property = new \ReflectionProperty(ScorerEntity::class, 'username');
+        $property = new \ReflectionProperty(Scorer::class, 'username');
         $property->setAccessible(true);
 
         $this->assertEquals($fixture, $property->getValue($entity), 'Internal username attribute is not valid');
@@ -44,10 +49,10 @@ class ScorerEntityTest extends TestCase
      */
     public function testSetPassword()
     {
-        $entity = new ScorerEntity();
+        $entity = new Scorer();
         $entity->setPassword('1234qwer');
 
-        $property = new \ReflectionProperty(ScorerEntity::class, 'password');
+        $property = new \ReflectionProperty(Scorer::class, 'password');
         $property->setAccessible(true);
 
         $this->assertEquals('1234qwer', $property->getValue($entity));
@@ -58,9 +63,9 @@ class ScorerEntityTest extends TestCase
      */
     public function testGetPassword()
     {
-        $entity = new ScorerEntity();
+        $entity = new Scorer();
 
-        $property = new \ReflectionProperty(ScorerEntity::class, 'password');
+        $property = new \ReflectionProperty(Scorer::class, 'password');
         $property->setAccessible(true);
         $property->setValue($entity, '1234qwer');
 
@@ -72,9 +77,9 @@ class ScorerEntityTest extends TestCase
      */
     public function testGetId()
     {
-        $entity = new ScorerEntity();
+        $entity = new Scorer();
 
-        $property = new \ReflectionProperty(ScorerEntity::class, 'id');
+        $property = new \ReflectionProperty(Scorer::class, 'id');
         $property->setAccessible(true);
         $property->setValue($entity, 55);
 
@@ -84,19 +89,19 @@ class ScorerEntityTest extends TestCase
 
     public function testGetRole()
     {
-        $entity = new ScorerEntity();
-        $this->assertEquals(['Scorer'], $entity->getRoles());
+        $entity = new Scorer();
+        $this->assertEquals(['ROLE_USER'], $entity->getRoles());
     }
 
     public function testGetSalt()
     {
-        $entity = new ScorerEntity();
+        $entity = new Scorer();
         $this->assertEquals(null, $entity->getSalt());
     }
 
     public function testEraseCredentials()
     {
-        $entity = new ScorerEntity();
+        $entity = new Scorer();
         $this->assertEquals(null, $entity->eraseCredentials());
     }
 }

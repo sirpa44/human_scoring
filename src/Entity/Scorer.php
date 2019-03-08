@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types = 1);
 /**
- * This a great software
+ * Human Scoring Software
  *
- * @author patpat
+ * @author antoinep@taotesting.com
  * @license See LICENCE.md
  */
 namespace App\Entity;
@@ -13,7 +13,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ScorerEntityRepository")
  */
-class ScorerEntity implements UserInterface
+class Scorer implements UserInterface
 {
     /**
      * @ORM\Id()
@@ -46,7 +46,7 @@ class ScorerEntity implements UserInterface
      * set the userName and return instance of ScorerEntity.
      *
      * @param mixed $username
-     * @return ScorerEntity
+     * @return Scorer
      */
     public function setUsername($username): self
     {
@@ -69,7 +69,7 @@ class ScorerEntity implements UserInterface
      * set the password and return instance of ScorerEntity.
      *
      * @param string $password
-     * @return ScorerEntity
+     * @return Scorer
      */
     public function setPassword(string $password): self
     {
@@ -91,11 +91,11 @@ class ScorerEntity implements UserInterface
     /**
      * Returns the roles granted to the user.
      *
-     * @return array (Role|string)[] The user roles
+     * @return array string[] The user roles
      */
     public function getRoles():array
     {
-        return ['Scorer'];
+        return ['ROLE_USER'];
     }
 
     /**
