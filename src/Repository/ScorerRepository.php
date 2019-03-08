@@ -16,7 +16,7 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  * @method Scorer[]    findAll()
  * @method Scorer[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ScorerEntityRepository extends ServiceEntityRepository
+class ScorerRepository extends ServiceEntityRepository
 {
     public function __construct(RegistryInterface $registry)
     {

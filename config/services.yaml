@@ -28,3 +28,6 @@ services:
     App\Command\ImportScorerCommand:
         arguments:
             $root: '%kernel.project_dir%'
+
+    App\Repository\ScorerRepository:
+        tags: ['doctrine.repository_service']
