@@ -31,6 +31,9 @@ class ImportScorerCommand extends Command
         $this->root = $root;
     }
 
+    /**
+     * configurations of the command
+     */
     protected function configure()
     {
         $this
@@ -40,24 +43,27 @@ class ImportScorerCommand extends Command
     }
 
 
-
+    /**
+     * command to import scorer from a csv file to the database
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
             $this->checkFile($output);
-            $it = $this->getIterator();
+            $it = $this->getIterator($output);
             $it->rewind();
-            // stopwatch
             $stopwatch = new Stopwatch();
             $stopwatch->start('import');
             while ($it->valid()) {
                 $scorer = $it->current();
-                // check if the scorer is correctly completed
                 if ($scorer['password'] === null) {
                     $output->writeln('The scorer ' . $scorer[0] . ' can\'t be add to the database' );
                 } else {
                     $dbScorer = $this->scorerRepository->findOneBy(['username' => $scorer['username']]);
-                    // check if the scorer already exist in database
                     if ($dbScorer instanceOf Scorer) {
                         $this->scorerAlreadyExistInDB($scorer, $input, $output);
                     } else {
@@ -66,23 +72,20 @@ class ImportScorerCommand extends Command
                 }
                 $it->next();
             }
-            // check if the command have the option --force
-            if ($input->hasParameterOption('--force')) {
-                $this->objectManager->flush();
-                $output->writeln('import done successfully !!');
-            } else {
-                $output->writeln(['try import done successfully !!', 'add --force to flush the Scorers']);
-            }
-            //  show the import stopwatch data
+            $this->forceOption($input,$output);
             $event = $stopwatch->stop('import');
-            $this->showStopwatchData($event->getMemory(),$event->getDuration());
-
+            $this->showStopwatchData($event->getMemory(),$event->getDuration(), $output);
             return 0;
         } catch (\Exception $e) {
             return 1;
         }
     }
 
+    /**
+     * check if the file exist
+     *
+     * @param OutputInterface $output
+     */
     private function checkFile(OutputInterface $output)
     {
         if (!file_exists($this->root . '/Sources/scorer.csv')) {
@@ -91,7 +94,11 @@ class ImportScorerCommand extends Command
         }
     }
 
-    private function getIterator()
+    /**
+     * @param OutputInterface $output
+     * @return object iterator
+     */
+    private function getIterator(OutputInterface $output)
     {
         $reader = Reader::createFromPath($this->root . '/Sources/scorer.csv', 'r');
         $reader->setHeaderOffset(0);
@@ -106,6 +113,13 @@ class ImportScorerCommand extends Command
         return $iterator;
     }
 
+    /**
+     * check if new scorer already exist in db
+     *
+     * @param $scorer
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     */
     private function scorerAlreadyExistInDB($scorer, InputInterface $input, OutputInterface $output)
     {
         $helper = $this->getHelper('question');
@@ -116,6 +130,11 @@ class ImportScorerCommand extends Command
         }
     }
 
+    /**
+     * persist a new scorer
+     *
+     * @param $scorer
+     */
     private function addNewScorer($scorer)
     {
         $scorerEntity = new Scorer();
@@ -124,14 +143,31 @@ class ImportScorerCommand extends Command
         $this->objectManager->persist($scorerEntity);
     }
 
-    private function convertStopwatchData($memory,$duration)
+    /**
+     * if there is '--force' option, flush the data in the database
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     */
+    private function forceOption(InputInterface $input, OutputInterface $output)
     {
-        $data['memory'] = round($memory / 1000000, 2);
-        $data['duration'] = round($duration / 1000, 2);
-        return $data;
+        if ($input->hasParameterOption('--force')) {
+            $this->objectManager->flush();
+            $output->writeln('import done successfully !!');
+        } else {
+            $output->writeln(['try import done successfully !!', 'add --force to flush the Scorers']);
+        }
     }
 
     /**
-     * stop watch pour avoir des metrix (temps d'execution, ram utiliser, cpu utiliser)
+     * @param $memory
+     * @param $duration
+     * @param OutputInterface $output
      */
+    private function showStopwatchData($memory, $duration, OutputInterface $output)
+    {
+        $data['memory'] = round($memory / 1000000, 2);
+        $data['duration'] = round($duration / 1000, 2);
+        $output->writeln(['memory: ' . $data['memory'] . ' Mo' , 'duration: ' . $data['duration'] . ' second']);
+    }
 }
