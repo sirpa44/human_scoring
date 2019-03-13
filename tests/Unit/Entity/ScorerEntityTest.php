@@ -5,7 +5,7 @@
  * @author antoinep@taotesting.com
  * @license See LICENCE.md
  */
-namespace App\tests\Unit\Tests\Entity;
+namespace App\tests\Unit\Entity;
 
 use App\Entity\Scorer;
 use PHPUnit\Framework\TestCase;

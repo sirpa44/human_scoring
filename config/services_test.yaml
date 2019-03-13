@@ -1,0 +1,7 @@
+parameters:
+    import_command.csv_file: /tests/Samples/scorer-test.csv
+
+#services:
+#    App\Command\ImportScorerCommand:
+#        arguments:
+#            $csvFilePath: '%kernel.project_dir%/tests/Samples/%import_command.csv_file%'

@@ -1,4 +1,10 @@
 <?php
+/**
+ * Human Scoring Software
+ *
+ * @author antoinep@taotesting.com
+ * @license See LICENCE.md
+ */
 namespace App\Command;
 
 use App\Entity\Scorer;
@@ -16,19 +22,24 @@ use Symfony\Component\Stopwatch\Stopwatch;
 
 class ImportScorerCommand extends Command
 {
-    protected $root;
+    protected $csvFilePath;
     protected $encoder;
     protected $objectManager;
     protected $scorerRepository;
+    protected $stopwatch;
+    protected $input;
+    protected $output;
 
-    public function __construct(string $root, UserPasswordEncoderInterface $encoder, ObjectManager $objectManager,
-                                ScorerRepository $scorerRepository)
+    public function __construct(string $csvFilePath, UserPasswordEncoderInterface $encoder, ObjectManager $objectManager,
+                                ScorerRepository $scorerRepository, Stopwatch $stopwatch)
     {
+        var_dump($csvFilePath);
+        $this->csvFilePath = $csvFilePath;
         $this->encoder = $encoder;
         $this->objectManager = $objectManager;
         $this->scorerRepository = $scorerRepository;
+        $this->stopwatch = $stopwatch;
         parent::__construct('app:import-scorer');
-        $this->root = $root;
     }
 
     /**
@@ -52,12 +63,13 @@ class ImportScorerCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->input = $input;
+        $this->output = $output;
         try {
-            $this->checkFile($output);
-            $it = $this->getIterator($output);
+            $this->checkFile();
+            $it = $this->getIterator();
             $it->rewind();
-            $stopwatch = new Stopwatch();
-            $stopwatch->start('import');
+            $this->stopwatch->start('import');
             while ($it->valid()) {
                 $scorer = $it->current();
                 if ($scorer['password'] === null) {
@@ -65,16 +77,16 @@ class ImportScorerCommand extends Command
                 } else {
                     $dbScorer = $this->scorerRepository->findOneBy(['username' => $scorer['username']]);
                     if ($dbScorer instanceOf Scorer) {
-                        $this->scorerAlreadyExistInDB($scorer, $input, $output);
+                        $this->scorerAlreadyExistInDB($scorer);
                     } else {
                         $this->addNewScorer($scorer);
                     }
                 }
                 $it->next();
             }
-            $this->forceOption($input,$output);
-            $event = $stopwatch->stop('import');
-            $this->showStopwatchData($event->getMemory(),$event->getDuration(), $output);
+            $this->forceOption();
+            $event = $this->stopwatch->stop('import');
+            $this->showStopwatchData($event->getMemory(),$event->getDuration());
             return 0;
         } catch (\Exception $e) {
             return 1;
@@ -83,30 +95,27 @@ class ImportScorerCommand extends Command
 
     /**
      * check if the file exist
-     *
-     * @param OutputInterface $output
      */
-    private function checkFile(OutputInterface $output)
+    private function checkFile()
     {
-        if (!file_exists($this->root . '/Sources/scorer.csv')) {
-            $output->writeln('File doesn\'t exist !');
+        if (!file_exists($this->csvFilePath)) {
+            $this->output->writeln('File doesn\'t exist !');
             throw new FileNotFoundException('File doesn\'t exist');
         }
     }
 
     /**
-     * @param OutputInterface $output
      * @return object iterator
      */
-    private function getIterator(OutputInterface $output)
+    private function getIterator()
     {
-        $reader = Reader::createFromPath($this->root . '/Sources/scorer.csv', 'r');
+        $reader = Reader::createFromPath($this->csvFilePath, 'r');
         $reader->setHeaderOffset(0);
         $headers = $reader->getHeader();
 
         // check the header of the csv file
         if ($headers[0] !== 'username' || $headers[1] !== 'password') {
-            $output->writeln('CSV file incorrectly filled' );
+            $this->output->writeln('CSV file incorrectly f illed' );
             throw new UnexpectedValueException();
         }
         $iterator = $reader->getIterator();
@@ -117,14 +126,12 @@ class ImportScorerCommand extends Command
      * check if new scorer already exist in db
      *
      * @param $scorer
-     * @param InputInterface $input
-     * @param OutputInterface $output
      */
-    private function scorerAlreadyExistInDB($scorer, InputInterface $input, OutputInterface $output)
+    private function scorerAlreadyExistInDB($scorer)
     {
         $helper = $this->getHelper('question');
         $question = new ChoiceQuestion('the Scorer ' . $scorer['username'] . ' already exist. do you want to update this Scorer ? (yes/no)', ['yes', 'no'], 0);
-        $response = $helper->ask($input, $output, $question);
+        $response = $helper->ask($this->input, $this->output, $question);
         if ($response === 'yes') {
             $this->addNewScorer($scorer);
         }
@@ -145,29 +152,25 @@ class ImportScorerCommand extends Command
 
     /**
      * if there is '--force' option, flush the data in the database
-     *
-     * @param InputInterface $input
-     * @param OutputInterface $output
      */
-    private function forceOption(InputInterface $input, OutputInterface $output)
+    private function forceOption()
     {
-        if ($input->hasParameterOption('--force')) {
+        if ($this->input->hasParameterOption('--force')) {
             $this->objectManager->flush();
-            $output->writeln('import done successfully !!');
+            $this->output->writeln('import done successfully !!');
         } else {
-            $output->writeln(['try import done successfully !!', 'add --force to flush the Scorers']);
+            $this->output->writeln(['try import done successfully !!', 'add --force to flush the Scorers']);
         }
     }
 
     /**
      * @param $memory
      * @param $duration
-     * @param OutputInterface $output
      */
-    private function showStopwatchData($memory, $duration, OutputInterface $output)
+    private function showStopwatchData($memory, $duration)
     {
         $data['memory'] = round($memory / 1000000, 2);
         $data['duration'] = round($duration / 1000, 2);
-        $output->writeln(['memory: ' . $data['memory'] . ' Mo' , 'duration: ' . $data['duration'] . ' second']);
+        $this->output->writeln(['memory: ' . $data['memory'] . ' Mo' , 'duration: ' . $data['duration'] . ' second']);
     }
 }
