@@ -9,53 +9,85 @@ namespace App\Command;
 
 use App\Entity\Scorer;
 use App\Repository\ScorerRepository;
+use App\Command\FormatManager\FormatFactory;
 use Doctrine\Common\Persistence\ObjectManager;
-use http\Exception\UnexpectedValueException;
-use League\Csv\Reader;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
-use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 
 class ImportScorerCommand extends Command
 {
-    protected $csvFilePath;
+    CONST OVERRIDE = 'override';
+
     protected $encoder;
     protected $objectManager;
     protected $scorerRepository;
     protected $stopwatch;
     protected $input;
     protected $output;
+    protected $dataManager;
+    protected $formatFactory;
 
-    public function __construct(string $csvFilePath, UserPasswordEncoderInterface $encoder, ObjectManager $objectManager,
-                                ScorerRepository $scorerRepository, Stopwatch $stopwatch)
+    public function __construct(UserPasswordEncoderInterface $encoder, ObjectManager $objectManager,
+                                ScorerRepository $scorerRepository, Stopwatch $stopwatch, FormatFactory $formatFactory)
     {
-        var_dump($csvFilePath);
-        $this->csvFilePath = $csvFilePath;
         $this->encoder = $encoder;
         $this->objectManager = $objectManager;
         $this->scorerRepository = $scorerRepository;
         $this->stopwatch = $stopwatch;
+        $this->formatFactory = $formatFactory;
         parent::__construct('app:import-scorer');
     }
 
     /**
-     * configurations of the command
      */
     protected function configure()
     {
         $this
             ->setDescription('Import scorers data from a CSV file')
-            ->setHelp('This command allow you to import scorer data from a CSV file')
-            ->addOption('--force');
+            ->setHelp('CSV file HEADERS: \'username,password\'');
+        $this->addOption(
+            'force',
+            'f',
+            InputOption::VALUE_NONE,
+            'Causes data ingestion to be applied into storage'
+        );
+        $this->addOption(
+          'overwrite',
+            'o',
+            InputOption::VALUE_NONE,
+            'overwrite Scorer in database'
+        );
+        $this->addArgument(
+            'path',
+            InputArgument::REQUIRED,
+            'Source path to ingest from'
+        );
+        $this->addArgument(
+            'format',
+            InputArgument::OPTIONAL,
+            'File data format, default: csv',
+            'csv'
+        );
+    }
+
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @throws \Exception
+     */
+    protected function initialize(InputInterface $input, OutputInterface $output)
+    {
+        $this->dataManager = $this->formatFactory->getInstance($input->getArgument('format'));
     }
 
 
     /**
-     * command to import scorer from a csv file to the database
+     * import scorer from data file to the database
      *
      * @param InputInterface $input
      * @param OutputInterface $output
@@ -63,28 +95,13 @@ class ImportScorerCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->stopwatch->start('import');
         $this->input = $input;
         $this->output = $output;
         try {
-            $this->checkFile();
-            $it = $this->getIterator();
-            $it->rewind();
-            $this->stopwatch->start('import');
-            while ($it->valid()) {
-                $scorer = $it->current();
-                if ($scorer['password'] === null) {
-                    $output->writeln('The scorer ' . $scorer[0] . ' can\'t be add to the database' );
-                } else {
-                    $dbScorer = $this->scorerRepository->findOneBy(['username' => $scorer['username']]);
-                    if ($dbScorer instanceOf Scorer) {
-                        $this->scorerAlreadyExistInDB($scorer);
-                    } else {
-                        $this->addNewScorer($scorer);
-                    }
-                }
-                $it->next();
-            }
-            $this->forceOption();
+            $data = $this->dataManager->getData($this->input->getArgument('path'), $input, $output);
+            $this->overwrite($data);
+            $this->force();
             $event = $this->stopwatch->stop('import');
             $this->showStopwatchData($event->getMemory(),$event->getDuration());
             return 0;
@@ -93,47 +110,36 @@ class ImportScorerCommand extends Command
         }
     }
 
-    /**
-     * check if the file exist
-     */
-    private function checkFile()
-    {
-        if (!file_exists($this->csvFilePath)) {
-            $this->output->writeln('File doesn\'t exist !');
-            throw new FileNotFoundException('File doesn\'t exist');
-        }
-    }
 
     /**
-     * @return object iterator
-     */
-    private function getIterator()
-    {
-        $reader = Reader::createFromPath($this->csvFilePath, 'r');
-        $reader->setHeaderOffset(0);
-        $headers = $reader->getHeader();
-
-        // check the header of the csv file
-        if ($headers[0] !== 'username' || $headers[1] !== 'password') {
-            $this->output->writeln('CSV file incorrectly f illed' );
-            throw new UnexpectedValueException();
-        }
-        $iterator = $reader->getIterator();
-        return $iterator;
-    }
-
-    /**
-     * check if new scorer already exist in db
+     * manage overwrite option
      *
-     * @param $scorer
+     * @param $data
      */
-    private function scorerAlreadyExistInDB($scorer)
+    private function overwrite($data)
     {
-        $helper = $this->getHelper('question');
-        $question = new ChoiceQuestion('the Scorer ' . $scorer['username'] . ' already exist. do you want to update this Scorer ? (yes/no)', ['yes', 'no'], 0);
-        $response = $helper->ask($this->input, $this->output, $question);
-        if ($response === 'yes') {
+        foreach ($data as $scorer) {
+            if (!$this->input->hasParameterOption(self::OVERRIDE)) {
+                $dbScorer = $this->scorerRepository->findOneBy(['username' => $scorer['username']]);
+                if ($dbScorer instanceOf Scorer) {
+                    continue;
+                }
+            }
             $this->addNewScorer($scorer);
+        }
+    }
+
+    /**
+     * if there is '--force' option, flush the data in the database
+     */
+    private function force()
+    {
+        if ($this->input->hasParameterOption('--force')) {
+            $this->objectManager->flush();
+
+            $this->output->writeln('import done successfully !!');
+        } else {
+            $this->output->writeln(['try import done successfully !!', 'add --force to flush the Scorers']);
         }
     }
 
@@ -148,19 +154,6 @@ class ImportScorerCommand extends Command
         $scorerEntity->setUsername($scorer['username']);
         $scorerEntity->setPassword($this->encoder->encodePassword($scorerEntity, $scorer['password']));
         $this->objectManager->persist($scorerEntity);
-    }
-
-    /**
-     * if there is '--force' option, flush the data in the database
-     */
-    private function forceOption()
-    {
-        if ($this->input->hasParameterOption('--force')) {
-            $this->objectManager->flush();
-            $this->output->writeln('import done successfully !!');
-        } else {
-            $this->output->writeln(['try import done successfully !!', 'add --force to flush the Scorers']);
-        }
     }
 
     /**

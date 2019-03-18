@@ -13,15 +13,17 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class ImportScorerCommandTest extends KernelTestCase
 {
-    public function testExecuteWithoutForce()
+    public function testExecuteWithoutForceOption()
     {
+        dump(__DIR__ . '/../../Samples/scorer-test.csv');
         $kernel = static::createKernel();
         $application = new Application($kernel);
         $command = $application->find('app:import-scorer');
         $commandTester = new CommandTester($command);
         $result = $commandTester->execute(
             [
-                'command' => $command->getName(),
+//                'command' => $command->getName(),
+                'path' => __DIR__ . '/../../Samples/scorer-test.csv',
             ],
             [
                 'capture_stderr_separately' => true
@@ -29,4 +31,24 @@ class ImportScorerCommandTest extends KernelTestCase
         );
         $this->assertEquals(0, $result);
     }
+
+//    public function testExecuteWtihForceOption()
+//    {
+//        $kernel = static::createKernel();
+//        $application = new Application($kernel);
+//        $command = $application->find('app:import-scorer --force');
+//        $commandTester = new CommandTester($command);
+//        $result = $commandTester->execute(
+//            [
+//                'command' => $command->getName(),
+//            ],
+//            [
+//                'path' => __DIR__ . '/../../Samples/scorer-test.csv'
+//            ],
+//            [
+//                'capture_stderr_separately' => true
+//            ]
+//        );
+//        $this->assertEquals(0, $result);
+//    }
 }
