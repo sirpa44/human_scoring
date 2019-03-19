@@ -7,15 +7,15 @@
  */
 namespace App\Command;
 
+use App\Command\Adapter\ProviderInterface;
 use App\Entity\Scorer;
-use App\Repository\ScorerRepository;
-use App\Command\FormatManager\FormatFactory;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 
@@ -25,25 +25,26 @@ class ImportScorerCommand extends Command
 
     protected $encoder;
     protected $objectManager;
-    protected $scorerRepository;
     protected $stopwatch;
     protected $input;
     protected $output;
-    protected $dataManager;
+    protected $dataProvider;
     protected $formatFactory;
+    protected $path;
+    protected $symfonyStyle;
 
     public function __construct(UserPasswordEncoderInterface $encoder, ObjectManager $objectManager,
-                                ScorerRepository $scorerRepository, Stopwatch $stopwatch, FormatFactory $formatFactory)
+                                Stopwatch $stopwatch, ProviderInterface $provider)
     {
         $this->encoder = $encoder;
         $this->objectManager = $objectManager;
-        $this->scorerRepository = $scorerRepository;
         $this->stopwatch = $stopwatch;
-        $this->formatFactory = $formatFactory;
+        $this->dataProvider = $provider;
         parent::__construct('app:import-scorer');
     }
 
     /**
+     *  configure options and argument of the command.
      */
     protected function configure()
     {
@@ -67,12 +68,6 @@ class ImportScorerCommand extends Command
             InputArgument::REQUIRED,
             'Source path to ingest from'
         );
-        $this->addArgument(
-            'format',
-            InputArgument::OPTIONAL,
-            'File data format, default: csv',
-            'csv'
-        );
     }
 
     /**
@@ -82,7 +77,14 @@ class ImportScorerCommand extends Command
      */
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
-        $this->dataManager = $this->formatFactory->getInstance($input->getArgument('format'));
+        $this->stopwatch->start('import');
+        $this->path = $input->getArgument('path');
+        $this->symfonyStyle = new SymfonyStyle($input, $output);
+    }
+
+    protected function interact(InputInterface $input, OutputInterface $output)
+    {
+        $this->symfonyStyle->title('Human-Scoring Import');
     }
 
 
@@ -95,19 +97,20 @@ class ImportScorerCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->stopwatch->start('import');
         $this->input = $input;
         $this->output = $output;
+
         try {
-            $data = $this->dataManager->getData($this->input->getArgument('path'), $input, $output);
-            $this->overwrite($data);
-            $this->force();
-            $event = $this->stopwatch->stop('import');
-            $this->showStopwatchData($event->getMemory(),$event->getDuration());
-            return 0;
+            $data = $this->dataProvider->getIterator($this->path, $this->symfonyStyle);
+            $this->persist($data);
+            $this->flush();
         } catch (\Exception $e) {
             return 1;
         }
+
+            $event = $this->stopwatch->stop('import');
+            $this->showStopwatchData($event->getMemory(),$event->getDuration ());
+            return 0;
     }
 
 
@@ -116,11 +119,11 @@ class ImportScorerCommand extends Command
      *
      * @param $data
      */
-    private function overwrite($data)
+    private function persist($data)
     {
         foreach ($data as $scorer) {
             if (!$this->input->hasParameterOption(self::OVERRIDE)) {
-                $dbScorer = $this->scorerRepository->findOneBy(['username' => $scorer['username']]);
+                $dbScorer = $this->objectManager->getRepository(Scorer::class)->findOneBy(['username' => $scorer['username']]);
                 if ($dbScorer instanceOf Scorer) {
                     continue;
                 }
@@ -132,14 +135,13 @@ class ImportScorerCommand extends Command
     /**
      * if there is '--force' option, flush the data in the database
      */
-    private function force()
+    private function flush()
     {
         if ($this->input->hasParameterOption('--force')) {
             $this->objectManager->flush();
-
-            $this->output->writeln('import done successfully !!');
+            $this->symfonyStyle->success('import done successfully !!');
         } else {
-            $this->output->writeln(['try import done successfully !!', 'add --force to flush the Scorers']);
+            $this->symfonyStyle->block('try import done successfully !!', 'info', 'fg=black;bg=blue', ' ', true);
         }
     }
 
@@ -165,5 +167,6 @@ class ImportScorerCommand extends Command
         $data['memory'] = round($memory / 1000000, 2);
         $data['duration'] = round($duration / 1000, 2);
         $this->output->writeln(['memory: ' . $data['memory'] . ' Mo' , 'duration: ' . $data['duration'] . ' second']);
+        $this->symfonyStyle->newLine();
     }
 }
