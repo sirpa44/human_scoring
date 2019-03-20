@@ -22,6 +22,7 @@ use Symfony\Component\Stopwatch\Stopwatch;
 class ImportScorerCommand extends Command
 {
     CONST OVERRIDE = 'override';
+    CONST FORCE = 'force';
 
     protected $encoder;
     protected $objectManager;
@@ -34,12 +35,13 @@ class ImportScorerCommand extends Command
     protected $symfonyStyle;
 
     public function __construct(UserPasswordEncoderInterface $encoder, ObjectManager $objectManager,
-                                Stopwatch $stopwatch, ProviderInterface $provider)
+                                Stopwatch $stopwatch, ProviderInterface $provider, SymfonyStyle $symfonyStyle)
     {
         $this->encoder = $encoder;
         $this->objectManager = $objectManager;
         $this->stopwatch = $stopwatch;
         $this->dataProvider = $provider;
+        $this->symfonyStyle = $symfonyStyle;
         parent::__construct('app:import-scorer');
     }
 
@@ -71,22 +73,19 @@ class ImportScorerCommand extends Command
     }
 
     /**
+     * Initialize variables
+     *
      * @param InputInterface $input
      * @param OutputInterface $output
      * @throws \Exception
      */
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
+        $this->input = $input;
+        $this->output = $output;
         $this->stopwatch->start('import');
         $this->path = $input->getArgument('path');
-        $this->symfonyStyle = new SymfonyStyle($input, $output);
     }
-
-    protected function interact(InputInterface $input, OutputInterface $output)
-    {
-        $this->symfonyStyle->title('Human-Scoring Import');
-    }
-
 
     /**
      * import scorer from data file to the database
@@ -97,9 +96,7 @@ class ImportScorerCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->input = $input;
-        $this->output = $output;
-
+        $this->symfonyStyle->title('Human-Scoring Import');
         try {
             $data = $this->dataProvider->getIterator($this->path, $this->symfonyStyle);
             $this->persist($data);
@@ -107,7 +104,6 @@ class ImportScorerCommand extends Command
         } catch (\Exception $e) {
             return 1;
         }
-
             $event = $this->stopwatch->stop('import');
             $this->showStopwatchData($event->getMemory(),$event->getDuration ());
             return 0;
@@ -115,7 +111,7 @@ class ImportScorerCommand extends Command
 
 
     /**
-     * manage overwrite option
+     * persist scorers
      *
      * @param $data
      */
@@ -137,7 +133,7 @@ class ImportScorerCommand extends Command
      */
     private function flush()
     {
-        if ($this->input->hasParameterOption('--force')) {
+        if ($this->input->hasParameterOption(self::FORCE)) {
             $this->objectManager->flush();
             $this->symfonyStyle->success('import done successfully !!');
         } else {
@@ -159,6 +155,8 @@ class ImportScorerCommand extends Command
     }
 
     /**
+     * convert and show StopWatch data
+     *
      * @param $memory
      * @param $duration
      */

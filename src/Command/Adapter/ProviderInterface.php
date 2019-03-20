@@ -11,7 +11,10 @@ namespace App\Command\Adapter;
 interface ProviderInterface
 {
     /**
+     * return an array of Scorers data
+     *
      * @param $filePath
+     * @param $symfonyStyle
      * @return mixed
      */
     public function getIterator($filePath, $symfonyStyle);

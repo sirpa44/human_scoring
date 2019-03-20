@@ -13,13 +13,11 @@ use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
 class Csv implements ProviderInterface
 {
-
-
     /**
      * return an array of Scorer data from a csv file
      *
      * @param $filePath
-     * @param $output
+     * @param $symfonyStyle
      * @return array
      */
     public function getIterator($filePath, $symfonyStyle)
