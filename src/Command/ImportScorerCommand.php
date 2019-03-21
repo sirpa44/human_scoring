@@ -97,8 +97,8 @@ class ImportScorerCommand extends Command
     {
         $this->stopwatch->start('import');
         $this->symfonyStyle->title('Human-Scoring Import');
-        if (!$this->input->hasParameterOption(self::OVERWRITE)) {
-            $this->output->writeln(['if you want overwrite scorer data in database use flag \'--overwrite\'', '']);
+        if (!$input->hasParameterOption(self::OVERWRITE)) {
+            $output->writeln(['if you want overwrite scorer data in database use flag \'--overwrite\'', '']);
 
         }
         try {
