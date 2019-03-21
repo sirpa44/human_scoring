@@ -15,7 +15,7 @@ interface ProviderInterface
      *
      * @param $filePath
      * @param $symfonyStyle
-     * @return mixed
+     * @return iterator
      */
     public function getIterator($filePath, $symfonyStyle);
 }

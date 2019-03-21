@@ -27,7 +27,7 @@ class Csv implements ProviderInterface
             $symfonyStyle->warning('Data file path incorrect.');
             throw new FileNotFoundException('Data file path incorrect.');
         }
-        $reader = Reader::createFromPath($filePath, 'r');
+        $reader = Reader::createFromPath($filePath);
         $reader->setHeaderOffset(0);
         $header = $reader->getHeader();
 
