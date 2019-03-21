@@ -133,30 +133,6 @@ class ImportScorerCommandTest extends KernelTestCase
                 'capture_stderr_separately' => true,
             ]
         );
-        $result2 = $commandTester->getDisplay();
-        dump($result);
-        dump($result2);
         $this->assertEquals(0, $result);
     }
-
-
-//    public function testExecuteWtihForceOption()
-//    {
-//        $kernel = static::createKernel();
-//        $application = new Application($kernel);
-//        $command = $application->find('app:import-scorer --force');
-//        $commandTester = new CommandTester($command);
-//        $result = $commandTester->execute(
-//            [
-//                'command' => $command->getName(),
-//            ],
-//            [
-//                'path' => __DIR__ . '/../../Samples/scorer-test.csv'
-//            ],
-//            [
-//                'capture_stderr_separately' => true
-//            ]
-//        );
-//        $this->assertEquals(0, $result);
-//    }
 }
