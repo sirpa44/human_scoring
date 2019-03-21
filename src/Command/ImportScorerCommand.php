@@ -21,8 +21,8 @@ use Symfony\Component\Stopwatch\Stopwatch;
 
 class ImportScorerCommand extends Command
 {
-    CONST OVERRIDE = 'override';
-    CONST FORCE = 'force';
+    CONST OVERWRITE = '--overwrite';
+    CONST FORCE = '--force';
 
     protected $encoder;
     protected $objectManager;
@@ -35,13 +35,12 @@ class ImportScorerCommand extends Command
     protected $symfonyStyle;
 
     public function __construct(UserPasswordEncoderInterface $encoder, ObjectManager $objectManager,
-                                Stopwatch $stopwatch, ProviderInterface $provider, SymfonyStyle $symfonyStyle)
+                                Stopwatch $stopwatch, ProviderInterface $provider)
     {
         $this->encoder = $encoder;
         $this->objectManager = $objectManager;
         $this->stopwatch = $stopwatch;
         $this->dataProvider = $provider;
-        $this->symfonyStyle = $symfonyStyle;
         parent::__construct('app:import-scorer');
     }
 
@@ -85,6 +84,7 @@ class ImportScorerCommand extends Command
         $this->output = $output;
         $this->stopwatch->start('import');
         $this->path = $input->getArgument('path');
+        $this->symfonyStyle = new SymfonyStyle($input, $output);
     }
 
     /**
@@ -96,7 +96,12 @@ class ImportScorerCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+
         $this->symfonyStyle->title('Human-Scoring Import');
+        if (!$this->input->hasParameterOption(self::OVERWRITE)) {
+            $this->output->writeln(['if you want overwrite scorer data in database use flag \'--overwrite\'', '']);
+
+        }
         try {
             $data = $this->dataProvider->getIterator($this->path, $this->symfonyStyle);
             $this->persist($data);
@@ -118,7 +123,7 @@ class ImportScorerCommand extends Command
     private function persist($data)
     {
         foreach ($data as $scorer) {
-            if (!$this->input->hasParameterOption(self::OVERRIDE)) {
+            if (!$this->input->hasParameterOption(self::OVERWRITE)) {
                 $dbScorer = $this->objectManager->getRepository(Scorer::class)->findOneBy(['username' => $scorer['username']]);
                 if ($dbScorer instanceOf Scorer) {
                     continue;

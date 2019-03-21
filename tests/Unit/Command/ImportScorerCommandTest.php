@@ -13,16 +13,14 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class ImportScorerCommandTest extends KernelTestCase
 {
-    public function testExecuteWithoutForceOption()
+    public function testExecute()
     {
-        dump(__DIR__ . '/../../Samples/scorer-test.csv');
         $kernel = static::createKernel();
         $application = new Application($kernel);
         $command = $application->find('app:import-scorer');
         $commandTester = new CommandTester($command);
         $result = $commandTester->execute(
             [
-//                'command' => $command->getName(),
                 'path' => __DIR__ . '/../../Samples/scorer-test.csv',
             ],
             [
@@ -31,6 +29,116 @@ class ImportScorerCommandTest extends KernelTestCase
         );
         $this->assertEquals(0, $result);
     }
+
+    public function testPathMissing()
+    {
+        $kernel = static::createKernel();
+        $application = new Application($kernel);
+        $command = $application->find('app:import-scorer');
+        $commandTester = new CommandTester($command);
+        $result = $commandTester->execute(
+            [
+                'path' => null,
+            ],
+            [
+                'capture_stderr_separately' => true
+            ]
+        );
+        $this->assertEquals(1, $result);
+    }
+
+    public function testWithWrongPath()
+    {
+        $kernel = static::createKernel();
+        $application = new Application($kernel);
+        $command = $application->find('app:import-scorer');
+        $commandTester = new CommandTester($command);
+        $result = $commandTester->execute(
+            [
+                'path' => __DIR__ . '/../../Samples/wrongPath.csv',
+            ],
+            [
+                'capture_stderr_separately' => true
+            ]
+        );
+        $this->assertEquals(1, $result);
+    }
+
+    public function testWithIncorrectlyFilledCsvFile()
+    {
+        $kernel = static::createKernel();
+        $application = new Application($kernel);
+        $command = $application->find('app:import-scorer');
+        $commandTester = new CommandTester($command);
+        $result = $commandTester->execute(
+            [
+                'path' => __DIR__ . '/../../Samples/incorrectlyFilled.csv',
+            ],
+            [
+                'capture_stderr_separately' => true
+            ]
+        );
+        $this->assertEquals(0, $result);
+    }
+
+    public function testWithWrongHeaderCsvFile()
+    {
+        $kernel = static::createKernel();
+        $application = new Application($kernel);
+        $command = $application->find('app:import-scorer');
+        $commandTester = new CommandTester($command);
+        $result = $commandTester->execute(
+            [
+                'path' => __DIR__ . '/../../Samples/wrongHeader.csv',
+            ],
+            [
+                'capture_stderr_separately' => true
+            ]
+        );
+        $this->assertEquals(1, $result);
+    }
+
+    public function testExecuteWithForceOption()
+    {
+        $kernel = static::createKernel();
+        $application = new Application($kernel);
+
+        $command = $application->find('app:import-scorer');
+        $commandTester = new CommandTester($command);
+        $result = $commandTester->execute(
+            [
+                'path' => __DIR__ . '/../../Samples/scorer-test.csv',
+                '--force'
+            ],
+            [
+                'capture_stderr_separately' => true,
+            ]
+        );
+        $this->assertEquals(0, $result);
+    }
+
+    public function testExecuteWithOverwriteOption()
+    {
+        $kernel = static::createKernel();
+        $application = new Application($kernel);
+
+        $command = $application->find('app:import-scorer');
+        $commandTester = new CommandTester($command);
+        $result = $commandTester->execute(
+            [
+                'path' => __DIR__ . '/../../Samples/scorer-test.csv',
+                '--overwrite'
+            ],
+            [
+                'capture_stderr_separately' => true,
+            ]
+        );
+        $result2 = $commandTester->getDisplay();
+        dump($result);
+        dump($result2);
+        $this->assertEquals(0, $result);
+    }
+
 
 //    public function testExecuteWtihForceOption()
 //    {

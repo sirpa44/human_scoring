@@ -54,6 +54,46 @@ Before running the tests please make sure you have PHP SQLite extension installe
 $ ./bin/phpunit
 ```
 
+## Import Scorer Command
+
+### CSV File 
+
+header: 
+username,password
+
+### Command
+
+Command Dry Run :
+```bash
+$ bin/console app:import-scorer <CsvFilePath>
+```
+
+### Options
+ 
+Force :
+```bash
+--force
+```
+Causes data ingestion to be applied into storage
+
+Overwrite :
+```bash
+--overwrite
+```
+overwrite Scorer in database
+
+###settings
+
+in 
+```bash
+config/services.yaml
+```
+set the adapter.
+```bash
+App\Command\Adapter\ProviderInterface:
+        alias: App\Command\Adapter\<Adapter>
+```
+
 ## Production
 
 A Production environment is available.
