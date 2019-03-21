@@ -18,7 +18,7 @@ class Csv implements ProviderInterface
      *
      * @param $filePath
      * @param $symfonyStyle
-     * @return array
+     * @return iterator
      */
     public function getIterator($filePath, $symfonyStyle)
     {
