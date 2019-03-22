@@ -82,18 +82,6 @@ Overwrite :
 ```
 overwrite Scorer in database
 
-###settings
-
-in 
-```bash
-config/services.yaml
-```
-set the adapter.
-```bash
-App\Command\Adapter\ProviderInterface:
-        alias: App\Command\Adapter\<Adapter>
-```
-
 ## Production
 
 A Production environment is available.
