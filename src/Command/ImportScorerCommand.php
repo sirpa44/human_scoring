@@ -7,7 +7,7 @@
  */
 namespace App\Command;
 
-use App\Command\Adapter\ProviderInterface;
+use App\Command\Adapter\AdapterInterface;
 use App\Entity\Scorer;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Console\Command\Command;
@@ -36,7 +36,7 @@ class ImportScorerCommand extends Command
     protected $symfonyStyle;
 
     public function __construct(UserPasswordEncoderInterface $encoder, ObjectManager $objectManager,
-                                Stopwatch $stopwatch, ProviderInterface $provider)
+                                Stopwatch $stopwatch, AdapterInterface $provider)
     {
         $this->encoder = $encoder;
         $this->objectManager = $objectManager;

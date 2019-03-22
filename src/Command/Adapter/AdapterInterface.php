@@ -8,7 +8,7 @@
 namespace App\Command\Adapter;
 
 
-interface ProviderInterface
+interface AdapterInterface
 {
     /**
      * return an array of Scorers data

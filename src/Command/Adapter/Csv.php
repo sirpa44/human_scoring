@@ -11,7 +11,7 @@ use http\Exception\UnexpectedValueException;
 use League\Csv\Reader;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
-class Csv implements ProviderInterface
+class Csv implements AdapterInterface
 {
     /**
      * return an array of Scorer data from a csv file
