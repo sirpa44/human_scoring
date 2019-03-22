@@ -21,8 +21,9 @@ use Symfony\Component\Stopwatch\Stopwatch;
 
 class ImportScorerCommand extends Command
 {
-    CONST OVERWRITE = '--overwrite';
-    CONST FORCE = '--force';
+    const OPTION_OVERWRITE = '--overwrite';
+    const OPTION_FORCE = '--force';
+    const ARGUMENT_PATH = 'path';
 
     protected $encoder;
     protected $objectManager;
@@ -82,7 +83,7 @@ class ImportScorerCommand extends Command
     {
         $this->input = $input;
         $this->output = $output;
-        $this->path = $input->getArgument('path');
+        $this->path = $input->getArgument(self::ARGUMENT_PATH);
         $this->symfonyStyle = new SymfonyStyle($input, $output);
     }
 
@@ -97,7 +98,7 @@ class ImportScorerCommand extends Command
     {
         $this->stopwatch->start('import');
         $this->symfonyStyle->title('Human-Scoring Import');
-        if (!$input->hasParameterOption(self::OVERWRITE)) {
+        if (!$input->hasParameterOption(self::OPTION_OVERWRITE)) {
             $output->writeln(['if you want overwrite scorer data in database use flag \'--overwrite\'', '']);
 
         }
@@ -122,7 +123,7 @@ class ImportScorerCommand extends Command
     private function persist($data)
     {
         foreach ($data as $scorer) {
-            if (!$this->input->hasParameterOption(self::OVERWRITE)) {
+            if (!$this->input->hasParameterOption(self::OPTION_OVERWRITE)) {
                 $dbScorer = $this->objectManager->getRepository(Scorer::class)->findOneBy(['username' => $scorer['username']]);
                 if ($dbScorer instanceOf Scorer) {
                     continue;
@@ -137,7 +138,7 @@ class ImportScorerCommand extends Command
      */
     private function flush()
     {
-        if ($this->input->hasParameterOption(self::FORCE)) {
+        if ($this->input->hasParameterOption(self::OPTION_FORCE)) {
             $this->objectManager->flush();
             $this->symfonyStyle->success('import done successfully !!');
         } else {
