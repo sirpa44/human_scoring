@@ -116,6 +116,7 @@ class ImportScorerCommand extends Command
 
 
     /**
+     * if there is option '--overwrite' persist
      * persist scorers
      *
      * @param $data
@@ -123,13 +124,15 @@ class ImportScorerCommand extends Command
     private function persist($data)
     {
         foreach ($data as $scorer) {
+            $dbScorer = $this->objectManager->getRepository(Scorer::class)->findOneBy(['username' => $scorer['username']]);
             if (!$this->input->hasParameterOption(self::OPTION_OVERWRITE)) {
-                $dbScorer = $this->objectManager->getRepository(Scorer::class)->findOneBy(['username' => $scorer['username']]);
-                if ($dbScorer instanceOf Scorer) {
-                    continue;
+                if (!($dbScorer instanceOf Scorer)) {
+                    $this->addNewScorer($scorer);
                 }
             }
-            $this->addNewScorer($scorer);
+            if ($dbScorer instanceOf Scorer) {
+                $this->updateScorer($dbScorer, $scorer);
+            }
         }
     }
 
@@ -155,6 +158,12 @@ class ImportScorerCommand extends Command
     {
         $scorerEntity = new Scorer();
         $scorerEntity->setUsername($scorer['username']);
+        $scorerEntity->setPassword($this->encoder->encodePassword($scorerEntity, $scorer['password']));
+        $this->objectManager->persist($scorerEntity);
+    }
+
+    private function updateScorer($scorerEntity, $scorer)
+    {
         $scorerEntity->setPassword($this->encoder->encodePassword($scorerEntity, $scorer['password']));
         $this->objectManager->persist($scorerEntity);
     }

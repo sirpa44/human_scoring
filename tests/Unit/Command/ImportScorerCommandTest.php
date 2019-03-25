@@ -135,4 +135,24 @@ class ImportScorerCommandTest extends KernelTestCase
         );
         $this->assertEquals(0, $result);
     }
+
+    public function testExecuteWithOverwriteAndForceOption()
+    {
+        $kernel = static::createKernel();
+        $application = new Application($kernel);
+
+        $command = $application->find('app:import-scorer');
+        $commandTester = new CommandTester($command);
+        $result = $commandTester->execute(
+            [
+                'path' => __DIR__ . '/../../Samples/scorer-test.csv',
+                '--overwrite',
+                '--force'
+            ],
+            [
+                'capture_stderr_separately' => true,
+            ]
+        );
+        $this->assertEquals(0, $result);
+    }
 }
