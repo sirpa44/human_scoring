@@ -56,10 +56,16 @@ $ ./bin/phpunit
 
 ## Import Scorer Command
 
+Import Scorer Command put scorers in the database from a CSV file
+
 ### CSV File 
 
-header: 
+example:
+```csv
 username,password
+scorer1,password1
+scorer2,password2
+``` 
 
 ### Command
 
@@ -74,13 +80,15 @@ Force :
 ```bash
 --force
 ```
-Causes data ingestion to be applied into storage
+Import Scorer Command is a DryRun by default.
+force option causes data ingestion to be applied into storage.
 
 Overwrite :
 ```bash
 --overwrite
 ```
-overwrite Scorer in database
+Import Scorer Command does't change scorer data for a Scorer that already exist in database by default.
+overwrite Scorer in database.
 
 ## Production
 
