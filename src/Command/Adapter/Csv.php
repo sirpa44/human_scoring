@@ -7,9 +7,8 @@
  */
 namespace App\Command\Adapter;
 
-use http\Exception\UnexpectedValueException;
 use League\Csv\Reader;
-use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
+use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
 class Csv implements AdapterInterface
 {
@@ -17,14 +16,12 @@ class Csv implements AdapterInterface
      * return an array of Scorer data from a csv file
      *
      * @param $filePath
-     * @param $symfonyStyle
      * @return iterator
      */
-    public function getIterator($filePath, $symfonyStyle)
+    public function getIterator($filePath)
     {
         $fileExtension = pathinfo($filePath, PATHINFO_EXTENSION);
         if ($fileExtension !== 'csv' || !file_exists($filePath)) {
-            $symfonyStyle->warning('Data file path incorrect.');
             throw new FileNotFoundException('Data file path incorrect.');
         }
         $reader = Reader::createFromPath($filePath);
@@ -32,8 +29,7 @@ class Csv implements AdapterInterface
         $header = $reader->getHeader();
 
         if ($header[0] !== 'username' || $header[1] !== 'password') {
-            $symfonyStyle->warning('CSV file header incorrectly filled.');
-            throw new UnexpectedValueException();
+            throw new \UnexpectedValueException('CSV file header incorrectly filled.');
         }
         $iterator = $reader->getIterator();
         $iterator->rewind();

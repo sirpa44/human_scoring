@@ -100,13 +100,13 @@ class ImportScorerCommand extends Command
         $this->symfonyStyle->title('Human-Scoring Import');
         if (!$input->hasParameterOption(self::OPTION_OVERWRITE)) {
             $output->writeln(['if you want overwrite scorer data in database use flag \'--overwrite\'', '']);
-
         }
         try {
-            $data = $this->dataProvider->getIterator($this->path, $this->symfonyStyle);
+            $data = $this->dataProvider->getIterator($this->path);
             $this->persist($data);
             $this->flush();
         } catch (\Exception $e) {
+            echo $e->getMessage();
             return 1;
         }
             $event = $this->stopwatch->stop('import');
@@ -178,7 +178,7 @@ class ImportScorerCommand extends Command
     {
         $data['memory'] = round($memory / 1000000, 2);
         $data['duration'] = round($duration / 1000, 2);
-        $this->output->writeln(['memory: ' . $data['memory'] . ' Mo' , 'duration: ' . $data['duration'] . ' second']);
+        $this->output->writeln(['memory: ' . $data['memory'] . ' MB' , 'duration: ' . $data['duration'] . ' seconds']);
         $this->symfonyStyle->newLine();
     }
 }

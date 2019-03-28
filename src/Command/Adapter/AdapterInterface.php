@@ -14,8 +14,7 @@ interface AdapterInterface
      * return an array of Scorers data
      *
      * @param $filePath
-     * @param $symfonyStyle
      * @return iterator
      */
-    public function getIterator($filePath, $symfonyStyle);
+    public function getIterator($filePath);
 }
