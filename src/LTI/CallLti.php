@@ -12,19 +12,18 @@ class CallLti
 {
     private $key;
     private $secret;
-    private $delivery;
+    private $rootUrl;
+    private $pathUrl;
     private $ltiParams;
-    private $url;
 
 
     public function __construct($ltiData)
     {
         $this->key = $ltiData['key'];
         $this->secret = $ltiData['secret'];
-        $this->delivery = 'http://taoproject/toto.rdf#i1547646939928581';
-        $urlParams = [
-            'delivery' => $this->delivery
-        ];
+        $this->rootUrl = $ltiData['rooturl'];
+        $this->pathUrl = $ltiData['pathurl'];
+//        $this->delivery = 'http://taoproject/toto.rdf#i1547646939928581';
         $this->url = $ltiData['rooturl'] . '/'. $ltiData['pathurl'] . '?' . http_build_query($urlParams);
         $this->ltiParams = array(
             'lis_person_name_full' => 'toto',
@@ -40,21 +39,27 @@ class CallLti
         );
     }
 
-    public function ltiTry()
+    public function ltiTry($delivery)
     {
         $test_consumer = new OAuthConsumer($this->key, $this->secret);
         $test_token = new OAuthToken($test_consumer, '');
         $hmac_method = new OAuthSignatureMethod_HMAC_SHA1();
 
-        $acc_req = OAuthRequest::from_consumer_and_token($test_consumer, $test_token, 'GET', $this->url,
-            $this->ltiParams);
+        $urlParams = [
+            'delivery' => $delivery
+        ];
+        $url = $this->rootUrl . '/'. $this->pathUrl . '?' . http_build_query($urlParams);
+
+        $acc_req = OAuthRequest::from_consumer_and_token(
+            $test_consumer,
+            $test_token,
+            'GET',
+            $url,
+            $this->ltiParams
+        );
         $acc_req->sign_request($hmac_method, $test_consumer, $test_token);
         $finalUrl = $acc_req->to_url();
 
         return $finalUrl;
-
-
-//        echo '<iframe src="' .  $finalUrl . '" width="1000px" height="1000">';
-//        echo '</iframe>';
     }
 }
