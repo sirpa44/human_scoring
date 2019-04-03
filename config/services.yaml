@@ -4,6 +4,11 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    role_lti: 'Learner'
+    consumer_key: 'key1'
+    consumer_secret: 'secret1'
+    root_url: 'http://taoproject'
+    path_url: 'ltiDeliveryProvider/DeliveryTool/launch'
 
 services:
     # default configuration for services in *this* file
@@ -25,7 +30,7 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
-#
+
 
     App\Repository\ScorerRepository:
         tags: ['doctrine.repository_service']
@@ -33,3 +38,12 @@ services:
 
     App\Command\Adapter\ProviderInterface:
         alias: App\Command\Adapter\Csv
+
+    App\LTI\CallLti:
+        arguments:
+            $ltiData:
+                role: '%role_lti%'
+                key: '%consumer_key%'
+                secret: '%consumer_secret%'
+                rooturl: '%root_url%'
+                pathurl: '%path_url%'

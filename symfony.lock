@@ -86,6 +86,9 @@
             "ref": "70062abc2cd58794d2a90274502f81b55cd9951b"
         }
     },
+    "imsglobal/lti": {
+        "version": "3.0.2"
+    },
     "jdorn/sql-formatter": {
         "version": "v1.2.17"
     },

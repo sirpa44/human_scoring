@@ -5,6 +5,7 @@
         "php": "^7.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "imsglobal/lti": "^3.0",
         "league/csv": "^9.1",
         "php-curl-class/php-curl-class": "^8.5",
         "symfony/apache-pack": "^1.0",

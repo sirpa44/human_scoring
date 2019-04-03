@@ -7,6 +7,7 @@
  */
 namespace App\Controller;
 
+use App\LTI\CallLti;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -16,13 +17,16 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class HomeController extends AbstractController
 {
     private $urlGenerator;
+    private $callLti;
 
     /**
      * @param UrlGeneratorInterface $urlGenerator
+     * @param CallLti $callLti
      */
-    public function __construct(UrlGeneratorInterface $urlGenerator)
+    public function __construct(UrlGeneratorInterface $urlGenerator, CallLti $callLti)
     {
         $this->urlGenerator = $urlGenerator;
+        $this->callLti = $callLti;
     }
 
     /**
@@ -34,6 +38,8 @@ class HomeController extends AbstractController
     {
         $user = $this->getUser();
         $role = $user->getRoles();
+
+        $this->callLti->ltiTry();
 
         return $this->render('page/home.html.twig', [
             'scorer' => $user->getUsername(),
