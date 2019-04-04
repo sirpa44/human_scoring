@@ -106,7 +106,7 @@ class ImportScorerCommand extends Command
             $this->persist($data);
             $this->flush();
         } catch (\Exception $e) {
-            echo $e->getMessage();
+            $this->symfonyStyle->warning($e->getMessage());
             return 1;
         }
             $event = $this->stopwatch->stop('import');
