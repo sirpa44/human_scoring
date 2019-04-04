@@ -16,7 +16,7 @@ class Csv implements AdapterInterface
      * return an array of Scorer data from a csv file
      *
      * @param $filePath
-     * @return iterator
+     * @return \Iterator
      */
     public function getIterator($filePath)
     {

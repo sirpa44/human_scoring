@@ -14,7 +14,7 @@ interface AdapterInterface
      * return an array of Scorers data
      *
      * @param $filePath
-     * @return iterator
+     * @return \Iterator
      */
     public function getIterator($filePath);
 }
