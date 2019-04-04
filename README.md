@@ -87,7 +87,7 @@ Overwrite :
 ```bash
 --overwrite
 ```
-Import Scorer Command does't change scorer data for a Scorer that already exist in database by default.
+Import Scorer Command doesn't change scorer data for a Scorer that already exist in database by default.
 overwrite Scorer in database.
 
 ## Production
