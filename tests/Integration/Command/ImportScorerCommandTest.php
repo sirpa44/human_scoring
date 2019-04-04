@@ -5,7 +5,7 @@
  * @author antoinep@taotesting.com
  * @license See LICENCE.md
  */
-namespace App\tests\Unit\Command;
+namespace App\tests\Integration\Command;
 
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
