@@ -25,11 +25,6 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
-#
 
-    App\Repository\ScorerRepository:
-        tags: ['doctrine.repository_service']
-
-
-    App\Command\Adapter\ProviderInterface:
+    App\Command\Adapter\AdapterInterface:
         alias: App\Command\Adapter\Csv
