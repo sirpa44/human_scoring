@@ -43,7 +43,10 @@ services:
         arguments:
             $ltiData:
                 role: '%role_lti%'
-                key: '%consumer_key%'
-                secret: '%consumer_secret%'
                 rooturl: '%root_url%'
                 pathurl: '%path_url%'
+
+    App\LTI\Consumer\Consumer:
+        arguments:
+            $key: '%consumer_key%'
+            $secret: '%consumer_secret%'
