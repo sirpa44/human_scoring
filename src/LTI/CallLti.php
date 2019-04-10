@@ -4,6 +4,7 @@ namespace App\LTI;
 
 
 use App\LTI\Consumer\Consumer;
+use App\LTI\Oauth\LtiOauthToken;
 use IMSGlobal\LTI\OAuth\OAuthConsumer;
 use IMSGlobal\LTI\OAuth\OAuthRequest;
 use IMSGlobal\LTI\OAuth\OAuthSignatureMethod_HMAC_SHA1;
@@ -11,15 +12,17 @@ use IMSGlobal\LTI\OAuth\OAuthToken;
 
 class CallLti
 {
-    private $consumer;
-    private $rootUrl;
-    private $pathUrl;
-    private $ltiParams;
+    protected $consumer;
+    protected $ltiOauthToken;
+    protected $rootUrl;
+    protected $pathUrl;
+    protected $ltiParams;
 
 
-    public function __construct($ltiData, Consumer $consumer)
+    public function __construct($ltiData, Consumer $consumer, LtiOauthToken $ltiOauthToken)
     {
         $this->consumer = $consumer;
+        $this->ltiOauthToken = $ltiOauthToken;
         $this->rootUrl = $ltiData['rooturl'];
         $this->pathUrl = $ltiData['pathurl'];
 //        $this->delivery = 'http://taoproject/toto.rdf#i1547646939928581';
@@ -37,11 +40,16 @@ class CallLti
         );
     }
 
+
     public function ltiTry($deliveryUri)
     {
         $test_consumer = new OAuthConsumer($this->consumer->getKey(), $this->consumer->getSecret());
-        $test_token = new OAuthToken($test_consumer, '');
+        $test_token = new OauthToken($test_consumer, '');
+//        $test_token = 'la tete a toto';
+//        dump($test_token->key);
+//        dump($this->consumer);die();
         $hmac_method = new OAuthSignatureMethod_HMAC_SHA1();
+
 
         $urlParams = [
             'delivery' => $deliveryUri
@@ -55,9 +63,20 @@ class CallLti
             $url,
             $this->ltiParams
         );
+
+//        $acc_req = OAuthRequest::from_consumer_and_token(
+//            $this->consumer,
+//            $this->ltiOauthToken,
+//            'GET',
+//            $url,
+//            $this->ltiParams
+//        );
+//        dump($acc_req);die();
         $acc_req->sign_request($hmac_method, $test_consumer, $test_token);
+//        $acc_req->sign_request($hmac_method, $this->consumer, $this->ltiOauthToken);
         $finalUrl = $acc_req->to_url();
 
+//        dump($finalUrl);die();
         return $finalUrl;
     }
 }

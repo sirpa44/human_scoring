@@ -38,9 +38,6 @@ class HomeController extends AbstractController
     {
         $user = $this->getUser();
         $role = $user->getRoles();
-
-        $this->callLti->ltiTry();
-
         return $this->render('page/home.html.twig', [
             'scorer' => $user->getUsername(),
             'role' => $role[0]

@@ -2,23 +2,31 @@
 namespace App\Controller;
 
 use App\LTI\CallLti;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ReviewController
+class ReviewController extends AbstractController
 {
+    private $callLti;
+
+    public function __construct(CallLti $callLti)
+    {
+        $this->callLti = $callLti;
+    }
 
     /**
      * show review page
      *
      * @Route("/review", name="app_review")
      * @param $deliveryUri
-     * @param CallLti $callLti
      * @return mixed
      */
-    public function showReview($deliveryUri, CallLti $callLti)
+    public function showReview()
     {
-        $ltiUrl = $callLti->ltiTry($deliveryUri);
-        return $this->render('security/review.html.twig', [
+        $deliveryUri = 'http://taoproject/toto.rdf#i1547646939928581';
+        $ltiUrl = $this->callLti->ltiTry($deliveryUri);
+//        dump($ltiUrl);
+        return $this->render('review/review.html.twig', [
             'ltiurl' => $ltiUrl
         ]);
     }

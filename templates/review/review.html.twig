@@ -3,6 +3,7 @@
 {% block title %}Log in!{% endblock %}
 
 {% block body %}
-    <iframe src="' . {{ ltiurl }} . '" width="1000px" height="1000">
+    <p>{{ ltiurl }}</p>
+    <iframe src="{{ ltiurl }}" width="1000px" height="1000">
     </iframe>
 {% endblock %}
