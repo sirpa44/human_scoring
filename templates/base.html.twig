@@ -8,27 +8,28 @@
         {% endblock %}
     </head>
     <body>
-    <div class="container-fluid">
-        <div class="row">
-            <nav class="navbar navbar-expand-lg navbar-light bg-primary">
-    <div class="container">
-                <img src="{{ asset('images/tao.svg') }}" alt="Logo" class="alert">
-                <ul class="nav navbar-nav navbar-right navbar-bottom">
-                    {% if app.user %}
-                        <li class="nav-link alert-info"><a  href="{{ path('app_logout') }}">Logout</a></li>
-                    {% endif %}
-                </ul>
-            </nav>
+        <div class="container-fluid">
+            <div class="row">
+                <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+                    <div class="container">
+                        <img src="{{ asset('images/tao.svg') }}" alt="Logo" class="alert">
+                        <ul class="nav navbar-nav navbar-right navbar-bottom">
+                            {% if app.user %}
+                                <li class="nav-link alert-info"><a  href="{{ path('app_logout') }}">Logout</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </nav>
+            </div>
         </div>
-        </div>
-    </div>
 
-    <div class="container">
-        <div class="row">
-            {% block body %}{% endblock %}
+        <div class="container">
+            <div class="row">
+                {% block body %}{% endblock %}
+            </div>
         </div>
-    </div>
 
-        {% block javascripts %}{% endblock %}
+        {% block javascripts %}
+        {% endblock %}
     </body>
 </html>

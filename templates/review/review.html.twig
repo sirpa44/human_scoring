@@ -3,7 +3,22 @@
 {% block title %}Log in!{% endblock %}
 
 {% block body %}
-    <p>{{ ltiurl }}</p>
-    <iframe src="{{ ltiurl }}" width="1000px" height="1000">
+    {#<p>{{ ltiurl }}</p>#}
+    <form id="lti-form" action="{{ ltiurl }}" method="POST" target="ici" style="display:none">
+
+        {% for key, value in signeddata %}
+            <input type="hidden" name="{{ key }}" value="{{ value }}">
+        {% endfor %}
+
+        <input id="lti-form-submit" type="submit" value="post">
+
+    </form>
+
+    <iframe src="{{ ltiurl }}" name="ici" width="1000px" height="1000">
     </iframe>
+
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{asset('JavaScript/LtiScript.js')}}"></script>
 {% endblock %}

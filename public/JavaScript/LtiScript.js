@@ -1,0 +1,1 @@
+document.getElementById("lti-form-submit").click();
