@@ -19,11 +19,19 @@ final class Version20190305132526 extends AbstractMigration
 
     public function up(Schema $schema) : void
     {
+        if ($this->connection->getSchemaManager()->tablesExist(['scorer_entity'])) {
+            $this->addSql('DROP TABLE scorer_entity');
+        }
+
+        $this->skipIf(
+            $this->connection->getSchemaManager()->tablesExist(['scorer']),
+            'Table scorer already exists'
+        );
+
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('CREATE TABLE scorer (id INT AUTO_INCREMENT NOT NULL, username VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
-        $this->addSql('DROP TABLE scorer_entity');
     }
 
     public function down(Schema $schema) : void

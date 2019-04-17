@@ -21,8 +21,7 @@ final class Version20190305143741 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
-
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_705707C8F85E0677 ON scorer (username)');
+        $this->addSql('CREATE UNIQUE INDEX IF NOT EXISTS UNIQ_705707C8F85E0677 ON scorer (username)');
     }
 
     public function down(Schema $schema) : void
