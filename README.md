@@ -16,7 +16,7 @@ set the environment:
 ```
 Server version: Apache/2.4.29 (Ubuntu)\
 PHP version: 7.2
-database: mysql
+database: mysql, postgresql.
 ```
 
 install the git repository:
@@ -33,10 +33,36 @@ $ composer install
 
 set the database:
 
+by default mysql config  :
+
+.env config file
+
+```bash
+DATABASE_URL="mysql://db_user:db_password@127.0.0.1:3306/db_name"
+```
+
+postgresql config:
+
+config/doctrine.yaml
+
+```yaml
+doctrine:
+dbal:
+    driver: 'pdo_pgsql'
+    charset: utf8
+```
+
+.env
+
+```bash
+DATABASE_URL=pgsql://db_user:db_password@127.0.0.1:5432/db_name
+```
+
+once the database is configured:
+
 ```bash
 $ bin/console doctrine:database:create --env=dev
 $ bin/console doctrine:schema:create --env=dev
-$ bin/console doctrine:migrations:migrate --env=dev
 ```
 
 ## Unittest
