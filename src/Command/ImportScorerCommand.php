@@ -55,19 +55,19 @@ class ImportScorerCommand extends Command
             ->setDescription('Import scorers data from a CSV file')
             ->setHelp('CSV file HEADERS: \'username,password\'');
         $this->addOption(
-            'force',
+            self::OPTION_FORCE,
             'f',
             InputOption::VALUE_NONE,
             'Causes data ingestion to be applied into storage'
         );
         $this->addOption(
-          'overwrite',
+          self::OPTION_OVERWRITE,
             'o',
             InputOption::VALUE_NONE,
             'overwrite Scorer in database'
         );
         $this->addArgument(
-            'path',
+            self::ARGUMENT_PATH,
             InputArgument::REQUIRED,
             'Source path to ingest from'
         );
