@@ -16,13 +16,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 
 class ImportScorerCommand extends Command
 {
-    const OPTION_OVERWRITE = '--overwrite';
-    const OPTION_FORCE = '--force';
+    const OPTION_OVERWRITE = 'overwrite';
+    const OPTION_FORCE = 'force';
     const ARGUMENT_PATH = 'path';
 
     protected $encoder;
@@ -98,10 +99,13 @@ class ImportScorerCommand extends Command
     {
         $this->stopwatch->start('import');
         $this->symfonyStyle->title('Human-Scoring Import');
-        if (!$input->hasParameterOption(self::OPTION_OVERWRITE)) {
+        if (!$input->getOption(self::OPTION_OVERWRITE)) {
             $output->writeln(['if you want overwrite scorer data in database use flag \'--overwrite\'', '']);
         }
         try {
+            if (!$this->path){
+                throw new FileNotFoundException('Data file path incorrect.');
+            }
             $data = $this->dataProvider->getIterator($this->path);
             $this->persist($data);
             $this->flush();
@@ -125,7 +129,7 @@ class ImportScorerCommand extends Command
     {
         foreach ($data as $scorer) {
             $dbScorer = $this->objectManager->getRepository(Scorer::class)->findOneBy(['username' => $scorer['username']]);
-            if (!$this->input->hasParameterOption(self::OPTION_OVERWRITE)) {
+            if (!$this->input->getOption(self::OPTION_OVERWRITE)) {
                 if (!($dbScorer instanceOf Scorer)) {
                     $this->addNewScorer($scorer);
                 }
@@ -141,7 +145,7 @@ class ImportScorerCommand extends Command
      */
     private function flush()
     {
-        if ($this->input->hasParameterOption(self::OPTION_FORCE)) {
+        if ($this->input->getOption(self::OPTION_FORCE)) {
             $this->objectManager->flush();
             $this->symfonyStyle->success('import done successfully !!');
         } else {
