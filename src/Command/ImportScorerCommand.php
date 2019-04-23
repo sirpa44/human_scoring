@@ -26,12 +26,33 @@ class ImportScorerCommand extends Command
     const OPTION_FORCE = 'force';
     const ARGUMENT_PATH = 'path';
 
+    /**
+     * @var UserPasswordEncoderInterface
+     */
     protected $encoder;
+    /**
+     * @var ObjectManager
+     */
     protected $objectManager;
+    /**
+     * @var Stopwatch
+     */
     protected $stopwatch;
+    /**
+     * @var InputInterface
+     */
     protected $input;
+    /**
+     * @var OutputInterface
+     */
     protected $output;
+    /**
+     * @var AdapterInterface
+     */
     protected $dataProvider;
+    /**
+     * @var 
+     */
     protected $formatFactory;
     protected $path;
     protected $symfonyStyle;
@@ -156,7 +177,7 @@ class ImportScorerCommand extends Command
     /**
      * persist a new scorer
      *
-     * @param $scorer
+     * @param array $scorer
      */
     private function addNewScorer($scorer)
     {
@@ -166,6 +187,12 @@ class ImportScorerCommand extends Command
         $this->objectManager->persist($scorerEntity);
     }
 
+    /**
+     * update the scorer data and persist
+     *
+     * @param callable $scorerEntity
+     * @param array $scorer
+     */
     private function updateScorer($scorerEntity, $scorer)
     {
         $scorerEntity->setPassword($this->encoder->encodePassword($scorerEntity, $scorer['password']));
