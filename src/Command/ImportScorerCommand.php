@@ -109,8 +109,8 @@ class ImportScorerCommand extends Command
             $data = $this->dataProvider->getIterator($this->path);
             $this->persist($data);
             $this->flush();
-        } catch (\Exception $e) {
-            $this->symfonyStyle->warning($e->getMessage());
+        } catch (\Throwable $t) {
+            $this->symfonyStyle->warning($t->getMessage());
             return 1;
         }
             $event = $this->stopwatch->stop('import');
